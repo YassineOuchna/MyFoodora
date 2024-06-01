@@ -19,7 +19,6 @@ class testCustomer {
 		assertEquals(1, sam.getId());
 		assertEquals(2, john.getId());
 
-
 	}
 
 }
