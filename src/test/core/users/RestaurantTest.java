@@ -27,7 +27,6 @@ class RestaurantTest {
 		restaurant.addDish("Chicken Nuggies", 2, true, FoodType.STANDARD, DishCategory.STARTER);
 		restaurant.addDish("Mcflurry", 3, true, FoodType.STANDARD, DishCategory.DESSERT);
 		Menu menu = restaurant.getMenu();
-		System.out.println(menu);
 		assertTrue(menu.getDishes().containsKey("Big Mac"));
 		assertTrue(menu.getDishes().containsKey("Chicken Nuggies"));
 		assertTrue(menu.getDishes().containsKey("Mcflurry"));
@@ -54,7 +53,6 @@ class RestaurantTest {
 		}
 
 		Menu menu = restaurant.getMenu();
-		System.out.println(menu);
 		assertTrue(menu.getMeals().containsKey("Big Mac Menu"));
 		
 		// Testing adding a meal with non Existent dishes
@@ -94,7 +92,6 @@ class RestaurantTest {
 		} catch (Exception e) {
 		}
 		
-		System.out.println(restaurant.getMenu());
 		try {
 			restaurant.removeMeal("meal0");
 		} catch (Exception e) {
