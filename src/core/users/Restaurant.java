@@ -17,6 +17,22 @@ public class Restaurant extends User implements SubscriberObservable{
 	private MenuItemFactoryProducer menuItemFactoryProducer;
 	private ArrayList<SubscriberObserver> subscribedCustomers;
 	private boolean specialOfferAdded=false;
+	
+	
+	public Restaurant(String newUsername, String password) {
+		super(newUsername, password);
+		this.location = new double[] {0,0};
+		this.menuItemFactoryProducer = new MenuItemFactoryProducer();
+		
+		// Initialize empty menu
+		this.menu = new Menu();
+		
+		// Default discount values
+		this.genericDiscount = 0.05;
+		this.specialDiscount= 0.1;
+		ArrayList<SubscriberObserver>list = new ArrayList<SubscriberObserver>();
+		this.subscribedCustomers = list;
+	}
 
 	public Restaurant(String newUsername, String password, double[] location) {
 		super(newUsername, password);
@@ -165,7 +181,7 @@ public class Restaurant extends User implements SubscriberObservable{
 	public void notifySubscribers() {
 		if (this.specialOfferAdded) {
 			for (SubscriberObserver ob: subscribedCustomers)
-				ob.updateSubscriber(this.surname,this.menu.getSpecialOffer());
+				ob.updateSubscriber(this.getSurname(),this.menu.getSpecialOffer());
 			this.specialOfferAdded=false;
 		}
 	}

@@ -62,9 +62,19 @@ class TestNotificationSystem {
         Meal specialOffer = new Meal("Special Offer", new ArrayList<Dish>());
         restaurant.setSpecialOffer(specialOffer);
 
+
+        // Verifying that customers not subscribed are not notified
+        assertFalse(subscriber1.getReceivedEmails().contains("New Special Offer available from restaurant" + restaurant.getSurname()+" : "+ specialOffer));
+        assertFalse(subscriber2.getReceivedEmails().contains("New Special Offer available from restaurant" + restaurant.getSurname()+" : "+ specialOffer));
+        
+        subscriber1.setNotificationsOn(true);
+        subscriber2.setNotificationsOn(true);
+
         // Verifying that subscribers are notified
-        assertTrue(subscriber1.getReceivedEmails().contains("New Special Offer available from restaurant" + restaurant.getSurname()+" : "+ specialOffer));
-        assertTrue(subscriber2.getReceivedEmails().contains("New Special Offer available from restaurant" + restaurant.getSurname()+" : "+ specialOffer));
+        Meal specialOffer2 = new Meal("Special Offer", new ArrayList<Dish>());
+        restaurant.setSpecialOffer(specialOffer2);
+        assertTrue(subscriber1.getReceivedEmails().contains("New Special Offer available from restaurant" + restaurant.getSurname()+" : "+ specialOffer2));
+        assertTrue(subscriber2.getReceivedEmails().contains("New Special Offer available from restaurant" + restaurant.getSurname()+" : "+ specialOffer2));
     }
 
 }
