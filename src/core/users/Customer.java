@@ -2,7 +2,7 @@ package core.users;
 
 
 
-public class Customer extends User implements Observer{
+public class Customer extends User{
 	private String phoneNumber;
 	
 	// Customer's address is stored as two real values
@@ -32,15 +32,15 @@ public class Customer extends User implements Observer{
 		// Default address set to center (0,0)
 		this.setAddress(new double[] {0,0});
 
-		// For better sales, notifications are on by default
-		this.notificationsOn = true;
+		// By default, notifications are off
+		this.notificationsOn = false;
 	}
 	
 	@Override
 	public String toString() {
-		return "User : Customer " + this.surname +"\n"
-				+ "Username : "+ this.username + "\n"
-				+ "ID : "+ super.id + "\n"
+		return "User : Customer " + this.getSurname() +"\n"
+				+ "Username : "+ this.getUsername()+ "\n"
+				+ "ID : "+ super.getId() + "\n"
 				+ "Address : "+ this.address + "\n"
 				+"Special offers notifications : " + (isNotificationsOn() ? "On" : "Off") + "\n";
 	}
@@ -74,17 +74,5 @@ public class Customer extends User implements Observer{
 	public void setAddress(double[] address) {
 		this.address = address;
 	}
-
-	@Override
-	public void updateSubscriber(core.food.Meal specialOffer) {
-		// TODO Auto-generated method stub
-		
-		System.out.println("updated");
-	}
-	
-	
-
-	
-	
 
 }

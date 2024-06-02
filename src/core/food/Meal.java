@@ -30,6 +30,12 @@ public class Meal {
 				this.foodType = FoodType.STANDARD;
 			}
 		}
+
+		// Pricing the meal depending on its contents
+		this.price = 0;
+		for (Dish dish : dishes) {
+			price += dish.getPrice();
+		}
 		
 		if (dishesList.size() == 2) {
 			this.mealSize = MealSize.HALFMEAL;
@@ -51,10 +57,6 @@ public class Meal {
 	}
 
 	public double getPrice() {
-		double total = 0;
-		for (Dish dish : dishes) {
-			total += dish.getPrice();
-		}
 		return price;
 	}
 

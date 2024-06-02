@@ -2,7 +2,7 @@ package core.users;
 
 public class User {
 	// Each user has a surname
-	protected String surname;
+	private String surname;
 	
 	/*
 	 * Each user has a unique id,
@@ -10,12 +10,12 @@ public class User {
 	 * generate an id upon construction 
 	 * of an instance
 	 */
-	protected int id;
+	private int id;
 	private static int nextId = 0;
 
 	
 	// login info
-	protected String username;
+	private String username;
 	private int hashedPassword; 
 	
 	public User(String newUsername, String password) {
@@ -41,5 +41,17 @@ public class User {
 	}
 	public int getId() {
 		return id;
+	}
+
+	public String getSurname() {
+		return surname;
+	}
+
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
+
+	public String getUsername() {
+		return username;
 	}
 }

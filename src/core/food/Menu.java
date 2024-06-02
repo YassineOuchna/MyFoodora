@@ -1,7 +1,8 @@
 package core.food;
 
-import java.util.Collection;
 import java.util.HashMap;
+
+import core.exceptions.ItemNotInMenuException;
 
 public class Menu {
 	
@@ -9,6 +10,12 @@ public class Menu {
 	private HashMap<String, Meal> meals;
 	
 	private Meal specialOffer;
+	
+	public Menu() {
+		this.dishes = new HashMap<String, Dish>();
+		this.meals = new HashMap<String, Meal>();
+		this.specialOffer = null;
+	}
 	
 	@Override
 	public String toString() {
@@ -21,11 +28,36 @@ public class Menu {
 		for (Meal meal : meals.values()) {
 			result = result + meal + "\n";
 		}
-		result = result + specialOffer;
+		result = result + "Special Offer : " + specialOffer;
 		return result;
 	}
 
 	
+	/**
+	 * Getter for a specific dish in the menu.
+	 * @param dishName : name of the dish to return 
+	 * @throws ItemNotInMenuException if dish isn't in the menu
+	 */
+	public Dish getDish(String dishName) throws ItemNotInMenuException{
+		if (!dishes.containsKey(dishName)) {
+			throw new ItemNotInMenuException("" + dishName + " not in Menu");
+		}
+		return dishes.get(dishName);
+	}
+
+	/**
+	 * Getter for a specific dish in the menu.
+	 * @param dishName : name of the dish to return 
+	 * @throws ItemNotInMenuException if dish isn't in the menu
+	 */
+	public Meal getMeal(String mealName) throws ItemNotInMenuException{
+		if (!dishes.containsKey(mealName)) {
+			throw new ItemNotInMenuException("" + mealName + " not in Menu");
+		}
+		return meals.get(mealName);
+	}
+
+		
 	public HashMap<String, Dish> getDishes() {
 		return dishes;
 	}
