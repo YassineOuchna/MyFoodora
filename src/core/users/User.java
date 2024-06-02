@@ -4,6 +4,9 @@ public class User {
 	// Each user has a surname
 	protected String surname;
 	
+	public String getSurname() {
+		return surname;
+	}
 	/*
 	 * Each user has a unique id,
 	 * static variable nextId is used to 

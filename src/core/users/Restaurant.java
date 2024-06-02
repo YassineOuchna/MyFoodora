@@ -4,19 +4,27 @@ import java.util.ArrayList;
 
 import core.enums.DishCategory;
 import core.enums.FoodType;
+import core.exceptions.SubscriberAlreadyExistsException;
+import core.exceptions.SubscriberNotFoundException;
 import core.food.*;
 
-public class Restaurant extends User{
+public class Restaurant extends User implements SubscriberObservable{
 	private double[] location;
 	private Menu menu;
 	private double genericDiscount;
 	private double specialDiscount;
 	private MenuItemFactoryProducer menuItemFactoryProducer;
+	private ArrayList<SubscriberObserver> subscribedCustomers;
+	private boolean specialOfferAdded=false;
 
 	public Restaurant(String newUsername, String password) {
 		super(newUsername, password);
 		this.menuItemFactoryProducer = new MenuItemFactoryProducer();
+		ArrayList<SubscriberObserver>list = new ArrayList<SubscriberObserver>();
+		this.subscribedCustomers = list;
+		this.menu= new Menu();
 	}
+	
 	
 
 	/**
@@ -110,7 +118,47 @@ public class Restaurant extends User{
 		return menu;
 	}
 	
-	
-	
+	public void setSpecialOffer(Meal specialOffer) {
+		menu.setSpecialOffer(specialOffer);
+		specialOfferAdded=true;
+		this.notifySubscribers();
+	}
 
+
+	@Override
+	public void addSubscriber(SubscriberObserver o) throws SubscriberAlreadyExistsException {
+		
+            if (subscribedCustomers.contains(o)) {
+                throw new core.exceptions.SubscriberAlreadyExistsException("Subscriber already exists " + o);}
+            
+            subscribedCustomers.add(o);
+            System.out.println("Subscriber added : " + o);
+      
+	}
+
+
+	@Override
+	public void removeSubscriber(SubscriberObserver o) throws SubscriberNotFoundException {
+            if (!subscribedCustomers.contains(o)) {
+                throw new core.exceptions.SubscriberNotFoundException("Subscriber doesn't exist : " + o);
+            }
+            subscribedCustomers.remove(o);
+            System.out.println("Subscriber removed : " + o);}
+		
+
+
+
+	@Override
+	public void notifySubscribers() {
+		if (this.specialOfferAdded) {
+			for (SubscriberObserver ob: subscribedCustomers)
+				ob.updateSubscriber(this.surname,this.menu.getSpecialOffer());
+			this.specialOfferAdded=false;
+		}
+	}
+
+
+	public ArrayList<SubscriberObserver> getSubscribedCustomers() {
+		return subscribedCustomers;
+	}
 }

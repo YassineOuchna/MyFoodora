@@ -1,8 +1,9 @@
 package core.users;
+import java.util.ArrayList;
 
 
 
-public class Customer extends User implements Observer{
+public class Customer extends User implements SubscriberObserver{
 	private String phoneNumber;
 	
 	// Customer's address is stored as two real values
@@ -25,6 +26,14 @@ public class Customer extends User implements Observer{
 	
 	//private FidelityPlan fidelityPlan;
 	
+	/*
+	 * A customer 
+	 */
+	private ArrayList<String> receivedEmails;
+	
+	
+	private String email;
+	
 	
 	public Customer(String newUsername, String password) {
 		super(newUsername, password);
@@ -34,6 +43,7 @@ public class Customer extends User implements Observer{
 
 		// For better sales, notifications are on by default
 		this.notificationsOn = true;
+		this.receivedEmails= new ArrayList<String>();
 	}
 	
 	@Override
@@ -76,12 +86,18 @@ public class Customer extends User implements Observer{
 	}
 
 	@Override
-	public void updateSubscriber(core.food.Meal specialOffer) {
-		// TODO Auto-generated method stub
-		
-		System.out.println("updated");
+	public void updateSubscriber(String restaurantName,core.food.Meal specialOffer) {
+		if (this.notificationsOn) {
+			this.receiveMail("New Special Offer available from restaurant"+ restaurantName+" : "+ specialOffer.toString());	
+		}
 	}
-	
+	public void receiveMail(String message) {
+		receivedEmails.add(message);
+	}
+
+	public ArrayList<String> getReceivedEmails() {
+		return receivedEmails;
+	}
 	
 
 	
