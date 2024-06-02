@@ -1,7 +1,8 @@
 package core.users;
 
 
-public class Customer extends User {
+
+public class Customer extends User implements Observer{
 	private String phoneNumber;
 	
 	// Customer's address is stored as two real values
@@ -14,6 +15,15 @@ public class Customer extends User {
 	 */
 	
 	private boolean notificationsOn;
+	
+	/*
+	 * Storing the list of Orders of the customer
+	 * and their Fidelity plan
+	 */
+	
+	//private ArrayList<Order> orderHistory;
+	
+	//private FidelityPlan fidelityPlan;
 	
 	
 	public Customer(String newUsername, String password) {
@@ -64,6 +74,17 @@ public class Customer extends User {
 	public void setAddress(double[] address) {
 		this.address = address;
 	}
+
+	@Override
+	public void updateSubscriber(core.food.Meal specialOffer) {
+		// TODO Auto-generated method stub
+		
+		System.out.println("updated");
+	}
+	
+	
+
+	
 	
 
 }
