@@ -5,17 +5,16 @@ import java.util.ArrayList;
 import core.enums.FoodType;
 import core.enums.MealSize;
 
-public class Meal implements MenuItem{
+public class Meal extends MenuItem{
 
-	private String name;
-	private double price;
 	private boolean hasGluten;
 	private FoodType foodType;
 	protected ArrayList<Dish> dishes;
 	protected MealSize mealSize;
 
 	public Meal(String mealName, ArrayList<Dish> dishesList) {
-		this.name = mealName;
+		super();
+		this.setName(mealName);
 		this.dishes = dishesList;
 		this.hasGluten = false;
 		this.foodType = FoodType.VEGETARIAN;
@@ -32,10 +31,11 @@ public class Meal implements MenuItem{
 		}
 
 		// Pricing the meal depending on its contents
-		this.price = 0;
+		double price = 0;
 		for (Dish dish : dishes) {
 			price += dish.getPrice();
 		}
+		this.setPrice(price);
 		
 		if (dishesList.size() == 2) {
 			this.mealSize = MealSize.HALFMEAL;
@@ -44,16 +44,12 @@ public class Meal implements MenuItem{
 	
 	@Override
 	public String toString() {
-		return "Meal : "+ this.name + ", " + foodType+ ", " + (hasGluten ? "" : ", gluten free") + '\n'+
+		return "Meal : "+ getName() + ", " + foodType+ ", " + (hasGluten ? "" : ", gluten free") + '\n'+
 				dishes;
 	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
+	
+	public void setPrice(double price) {
+		super.price = price;
 	}
 
 	public double getPrice() {

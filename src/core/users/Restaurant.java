@@ -2,8 +2,7 @@ package core.users;
 
 import java.util.ArrayList;
 
-import core.enums.DishCategory;
-import core.enums.FoodType;
+import core.exceptions.InvalidItemDescription;
 import core.exceptions.ItemNotInMenuException;
 import core.exceptions.SubscriberAlreadyExistsException;
 import core.exceptions.SubscriberNotFoundException;
@@ -14,7 +13,6 @@ public class Restaurant extends User implements SubscriberObservable{
 	private Menu menu;
 	private double genericDiscount;
 	private double specialDiscount;
-	private MenuItemFactoryProducer menuItemFactoryProducer;
 	private ArrayList<SubscriberObserver> subscribedCustomers;
 	private boolean specialOfferAdded=false;
 	
@@ -22,7 +20,6 @@ public class Restaurant extends User implements SubscriberObservable{
 	public Restaurant(String newUsername, String password) {
 		super(newUsername, password);
 		this.location = new double[] {0,0};
-		this.menuItemFactoryProducer = new MenuItemFactoryProducer();
 		
 		// Initialize empty menu
 		this.menu = new Menu();
@@ -37,7 +34,6 @@ public class Restaurant extends User implements SubscriberObservable{
 	public Restaurant(String newUsername, String password, double[] location) {
 		super(newUsername, password);
 		this.location = location;
-		this.menuItemFactoryProducer = new MenuItemFactoryProducer();
 		
 		// Initialize empty menu
 		this.menu = new Menu();
@@ -52,72 +48,29 @@ public class Restaurant extends User implements SubscriberObservable{
 	
 
 	/**
-	 * This method adds a dish 
+	 * This method adds an item
 	 * to the restaurant's menu 
-	 * @param name : name of the dish
-	 * @param price : price of the dish
-	 * @param foodType : enum specifying vegetarian or standard dish
-	 * @param dishCategory : enum main dish, entry or dessert 
-	 * @param hasGluten : boolean specifying if it contains gluten 
+	 * @param itemType : type of the item
+	 * @param description : specific array of strings to describe
+	 * the item. Order is important as well as certain values.
+	 * The array is parsed by the menu object.
+	 * @throws InvalidItemDescription : if the description array holds
+	 * invalid values.
 	 */
-	public void addDish(String name, double price, boolean hasGluten, FoodType foodType, DishCategory dishCategory) {
-		MenuItemFactory dishFactory = menuItemFactoryProducer.getFactory("Dish");
-		Dish newDish = dishFactory.createDish(name, price, hasGluten, foodType, dishCategory);
-		menu.addDish(newDish);
+	public void addMenuItem(String itemType, String[] description) throws InvalidItemDescription{
+		this.menu.addItem(itemType, description);
 	}
 
-	/**
-	 * This method adds a meal
-	 * to the restaurant's menu. 
-	 * @param name : name of the dish
-	 * @param dishes : ArrayList of names of dishes composing the meal
-	 * @param mealSize : enum specifying if its a full meal or half meal 
-	 * @param foodType : enum specifying vegetarian or standard dish
-	 * @param dishCategory : enum main dish, entry or dessert 
-	 * @param hasGluten : boolean specifying if it contains gluten 
-	 * @throws an ItemNotInMenuException if the meal isn't in the menu
-	 */
-	public void addMeal(String name, ArrayList<String> dishNames) throws ItemNotInMenuException{
-
-		// Dish objects corresponding to dishNames
-		ArrayList<Dish> dishes = new ArrayList<Dish>();
-		for (String dishName : dishNames) {
-			if (!this.menu.getDishes().containsKey(dishName)) {
-				throw new ItemNotInMenuException("Can't add meal : " + dishName + " not in Menu");
-			}
-			dishes.add(menu.getDishes().get(dishName));
-		}
-		MenuItemFactory mealFactory = menuItemFactoryProducer.getFactory("Meal");
-		Meal newMeal = mealFactory.createMeal(name, dishes);
-		menu.addMeal(newMeal);
-	}
 	
 	/**
-	 * Removes the dish from the menu
-	 * @param dishName : name of the dish to remove
-	 * @throws an ItemNotInMenuException if the meal isn't in the menu
+	 * Removes the item from the menu
+	 * @param itemName : name of the item to remove
+	 * @throws an ItemNotInMenuException if the item isn't in the menu
 	 */
-	public void removeDish(String dishName) throws ItemNotInMenuException {
-		
-		// Checking if dishName exists in the menu
-		if (!this.menu.getDishes().containsKey(dishName)) {
-			throw new ItemNotInMenuException("Can't remove dish : " + dishName + " not in Menu");
-		}
-		this.menu.removeDish(dishName);
+	public void removeItem(String itemName) throws ItemNotInMenuException {
+		this.menu.removeItem(itemName);
 	}
 	
-	/**
-	 * Removes the meal from the menu
-	 * @param mealName: name of the meal to remove
-	 * @throws an ItemNotInMenuException if the meal isn't in the menu
-	 */
-	public void removeMeal(String mealName) throws ItemNotInMenuException {
-		// Checking if dishName exists in the menu
-		if (!this.menu.getMeals().containsKey(mealName)) {
-			throw new ItemNotInMenuException("Can't remove meal : " + mealName + " not in Menu");
-		}
-		this.menu.removeMeal(mealName);
-	}
 	
 	public double[] getLocation() {
 		return location;

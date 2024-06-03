@@ -1,13 +1,15 @@
 package core.food;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
+import core.enums.DishCategory;
+import core.enums.FoodType;
+import core.exceptions.InvalidItemDescription;
 import core.exceptions.ItemNotInMenuException;
 
 public class Menu {
 	
-	private HashMap<String, Dish> dishes;
-	private HashMap<String, Meal> meals;
 	private HashMap<String,MenuItem> items;
 	
 	
@@ -15,83 +17,91 @@ public class Menu {
 	private Meal specialOffer;
 	
 	public Menu() {
-		this.dishes = new HashMap<String, Dish>();
-		this.meals = new HashMap<String, Meal>();
 		this.items=new HashMap<String,MenuItem>();
 		this.specialOffer = null;
 	}
+
 	
 	@Override
 	public String toString() {
-		String result = "Dishes : \n";
-		for (Dish dish : dishes.values()) {
-			result = result + dish + "\n";
+		String result = "Menu contents :";
+		for (MenuItem item : items.values()) {
+			result = result + item + "\n";
 		}
-		result += "Meals  : \n";
 
-		for (Meal meal : meals.values()) {
-			result = result + meal + "\n";
-		}
 		result = result + "Special Offer : " + specialOffer;
 		return result;
 	}
-
 	
 	/**
-	 * Getter for a specific dish in the menu.
-	 * @param dishName : name of the dish to return 
-	 * @throws ItemNotInMenuException if dish isn't in the menu
+	 * Adds an item to the 
+	 * restaurant's menu.
+	 * @param itemType : Type the type of the item
+	 * @param description : an array of strings with necessary information
+	 * to describe the item. 
+	 * @throws ItemNotInMenuException when adding an item like a meal 
+	 * that is composed of non existent "atomic" items in the menu.
 	 */
-	public Dish getDish(String dishName) throws ItemNotInMenuException{
-		if (!dishes.containsKey(dishName)) {
-			throw new ItemNotInMenuException("" + dishName + " not in Menu");
+	public void addItem(String itemType, String[] description) throws InvalidItemDescription{
+		// Checking type of item 
+		if (itemType.equalsIgnoreCase("DISH")) {
+			if (description.length == 5) {
+			String name = description[0];
+			DishCategory dishCategory = DishCategory.valueOf(description[1].toUpperCase());
+			FoodType foodType = FoodType.valueOf(description[2].toUpperCase());
+			boolean hasGluten = (description[3] == "1");
+			double price = Double.valueOf(description[4]);
+			Dish dish = new Dish(name, price, hasGluten, foodType, dishCategory);
+			items.put(name, dish);
+			} else {
+				throw new InvalidItemDescription("Incorrect length for the description");
+			}
 		}
-		return dishes.get(dishName);
+
+		if (itemType.equalsIgnoreCase("MEAL")) {
+			String name = description[0];
+			ArrayList<Dish> dishList = new ArrayList<Dish>();
+			int n = description.length;
+			// looping through remaining description
+			for (int i=1; i<n; i++) {
+				String dishName = description[i];
+				// Checking if the dishes are in the menu
+				if (!items.containsKey(dishName)) {
+					throw new InvalidItemDescription("Invalid dish name : " + dishName+ " Not in menu");
+				}
+				
+				dishList.add((Dish) items.get(dishName));
+			}
+			
+			Meal meal = new Meal(name, dishList);
+			items.put(name, meal);
+		}
 	}
 
 	/**
-	 * Getter for a specific dish in the menu.
-	 * @param dishName : name of the dish to return 
-	 * @throws ItemNotInMenuException if dish isn't in the menu
+	 * Getter for a specific item in the menu.
+	 * @param itemName : name of the item to return.
+	 * @throws ItemNotInMenuException if the item isn't in the menu
 	 */
-	public Meal getMeal(String mealName) throws ItemNotInMenuException{
-		if (!dishes.containsKey(mealName)) {
-			throw new ItemNotInMenuException("" + mealName + " not in Menu");
+	public MenuItem getItem(String itemName) throws ItemNotInMenuException{
+		if (!items.containsKey(itemName)) {
+			throw new ItemNotInMenuException("" + itemName + " not in Menu");
 		}
-		return meals.get(mealName);
+		return items.get(itemName);
 	}
 
 		
-	public HashMap<String, Dish> getDishes() {
-		return dishes;
-	}
-
-	public void addDish(Dish dish) {
-		this.dishes.put(dish.getName(), dish);
-		this.items.put(dish.getName(), dish);
-	}
-	
 	/**
-	 * Removes the dish from the menu 
-	 * @param dishName :  a valid dish name that is in the menu
+	 * Removes the item from the menu 
+	 * @param itemName : item name to remove.
+	 * @throws ItemNotInMenuException if the item isn't in the menu
 	 */
-	public void removeDish(String dishName) {
-		dishes.remove(dishName);
-		items.remove(dishName);
-	}
+	public void removeItem(String itemName) throws ItemNotInMenuException {
 
-	public HashMap<String, Meal> getMeals() {
-		return meals;
-	}
-
-	public void addMeal(Meal meal) {
-		this.meals.put(meal.getName(), meal);
-		this.items.put(meal.getName(), meal);
-	}
-	
-	public void removeMeal(String mealName) {
-		meals.remove(mealName);
-		items.remove(mealName);
+		if (!items.containsKey(itemName)) {
+			throw new ItemNotInMenuException("" + itemName + " not in Menu");
+		}
+		items.remove(itemName);
 	}
 
 	public Meal getSpecialOffer() {
@@ -106,9 +116,6 @@ public class Menu {
 		return items;
 	}
 
-	public MenuItem getItem(String string) {
-		return items.get(string);
-	}
 
 	
 }

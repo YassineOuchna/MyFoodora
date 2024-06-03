@@ -16,50 +16,72 @@ import core.users.Restaurant;
 class RestaurantTest {
 
 	Restaurant restaurant;
+	String[] bigMacDesc;
+	String[] ChickenNuggiesDesc;
+	String[] mcflurryDesc;
 	@BeforeEach 
 	void initializeRestaurant() {
 		restaurant = new Restaurant("MickyDeez", "mickyPassword" , new double[] {15, 22});
+		bigMacDesc = new String[] {"Big Mac",
+				"maindish", 
+				"Standard",
+				"1",
+				"7.99"
+		};
+		ChickenNuggiesDesc = new String[] {"Chicken Nuggies",
+				"Starter", 
+				"Standard",
+				"1",
+				"2"
+		};
+		mcflurryDesc= new String[] {"mcflurry",
+				"dessert", 
+				"Standard",
+				"0",
+				"3"
+		};
 	}
 
 	@Test
 	void testAddDish() {
-		restaurant.addDish("Big Mac", 7.99, true, FoodType.STANDARD, DishCategory.MAINDISH);
-		restaurant.addDish("Chicken Nuggies", 2, true, FoodType.STANDARD, DishCategory.STARTER);
-		restaurant.addDish("Mcflurry", 3, true, FoodType.STANDARD, DishCategory.DESSERT);
+		restaurant.addMenuItem("dish", mcflurryDesc);
+		restaurant.addMenuItem("dish", bigMacDesc);
+		restaurant.addMenuItem("dish", ChickenNuggiesDesc);
 		Menu menu = restaurant.getMenu();
-		assertTrue(menu.getDishes().containsKey("Big Mac"));
-		assertTrue(menu.getDishes().containsKey("Chicken Nuggies"));
-		assertTrue(menu.getDishes().containsKey("Mcflurry"));
+		assertTrue(menu.getItems().containsKey("Big Mac"));
+		assertTrue(menu.getItems().containsKey("Chicken Nuggies"));
+		assertTrue(menu.getItems().containsKey("Mcflurry"));
 	}
 
 	@Test
 	void testAddMeal() {
 
 		// Adding dishes first 
-		restaurant.addDish("Big Mac", 7.99, true, FoodType.STANDARD, DishCategory.MAINDISH);
-		restaurant.addDish("Chicken Nuggies", 2, true, FoodType.STANDARD, DishCategory.STARTER);
-		restaurant.addDish("Mcflurry", 3, true, FoodType.STANDARD, DishCategory.DESSERT);
+		restaurant.addMenuItem("dish", mcflurryDesc);
+		restaurant.addMenuItem("dish", bigMacDesc);
+		restaurant.addMenuItem("dish", ChickenNuggiesDesc);
 		
-		// Getting names of dishes to compose the meal
-		ArrayList<String> dishNames = new ArrayList<String>();
-		dishNames.add("Big Mac");
-		dishNames.add("Chicken Nuggies");
-		dishNames.add("Mcflurry");
+		// Description array of meal 
+		String[] mealDesc = new String[] {"Big Mac Meal",
+				mcflurryDesc[0],
+				bigMacDesc[0],
+				ChickenNuggiesDesc[0]
+		};
 		
 		// Adding should go through
 		try {
-			restaurant.addMeal("Big Mac Menu", dishNames);
+			restaurant.addMenuItem("meal", mealDesc);
 		} catch (Exception e) {
 		}
 
 		Menu menu = restaurant.getMenu();
-		assertTrue(menu.getMeals().containsKey("Big Mac Menu"));
+		assertTrue(menu.getItems().containsKey("Big Mac Menu"));
 		
 		// Testing adding a meal with non Existent dishes
 		ArrayList<String> wrongDishNames = new ArrayList<String>();
 		wrongDishNames.add("Chicken Nuggies");
 		wrongDishNames.add("Dish6977");
-		assertThrows(ItemNotInMenuException.class, () -> restaurant.addMeal("meal21", wrongDishNames));
+		assertThrows(ItemNotInMenuException.class, () -> restaurant.addMenuItem("meal21", wrongDishNames));
 
 	}
 

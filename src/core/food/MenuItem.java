@@ -1,7 +1,18 @@
 package core.food;
 
-public interface MenuItem {
-	public String getName();
-	public double getPrice();
+public abstract class MenuItem {
+	private String name;
+	protected double price;
+
+	public String getName() {
+		return this.name;
+	}
+
+	public abstract double getPrice();
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 
 }
