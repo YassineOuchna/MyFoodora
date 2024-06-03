@@ -8,12 +8,16 @@ public class Menu {
 	
 	private HashMap<String, Dish> dishes;
 	private HashMap<String, Meal> meals;
+	private HashMap<String,MenuItem> items;
 	
+	
+
 	private Meal specialOffer;
 	
 	public Menu() {
 		this.dishes = new HashMap<String, Dish>();
 		this.meals = new HashMap<String, Meal>();
+		this.items=new HashMap<String,MenuItem>();
 		this.specialOffer = null;
 	}
 	
@@ -64,6 +68,7 @@ public class Menu {
 
 	public void addDish(Dish dish) {
 		this.dishes.put(dish.getName(), dish);
+		this.items.put(dish.getName(), dish);
 	}
 	
 	/**
@@ -72,6 +77,7 @@ public class Menu {
 	 */
 	public void removeDish(String dishName) {
 		dishes.remove(dishName);
+		items.remove(dishName);
 	}
 
 	public HashMap<String, Meal> getMeals() {
@@ -80,10 +86,12 @@ public class Menu {
 
 	public void addMeal(Meal meal) {
 		this.meals.put(meal.getName(), meal);
+		this.items.put(meal.getName(), meal);
 	}
 	
 	public void removeMeal(String mealName) {
 		meals.remove(mealName);
+		items.remove(mealName);
 	}
 
 	public Meal getSpecialOffer() {
@@ -93,4 +101,14 @@ public class Menu {
 	public void setSpecialOffer(Meal specialOffer) {
 		this.specialOffer = specialOffer;
 	}
+	
+	public HashMap<String, MenuItem> getItems() {
+		return items;
+	}
+
+	public MenuItem getItem(String string) {
+		return items.get(string);
+	}
+
+	
 }

@@ -3,7 +3,7 @@ package core.food;
 import core.enums.DishCategory;
 import core.enums.FoodType;
 
-public class Dish {
+public class Dish implements MenuItem{
 
 	private String name;
 	private double price;

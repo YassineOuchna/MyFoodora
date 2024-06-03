@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import core.enums.FoodType;
 import core.enums.MealSize;
 
-public class Meal {
+public class Meal implements MenuItem{
 
 	private String name;
 	private double price;
