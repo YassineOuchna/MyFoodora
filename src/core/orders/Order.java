@@ -1,6 +1,7 @@
 package core.orders;
 
 import core.food.*;
+
 import core.exceptions.ItemNotInMenuException;
 import core.exceptions.ItemNotInOrderException;
 import core.users.Restaurant;
@@ -34,6 +35,13 @@ public class Order {
         this.name= name;
         this.orders = new HashMap<>();
         this.ordering=true;
+    }
+	public Order(Restaurant restaurant,String name, Customer customer) {
+        this.restaurant = restaurant;
+        this.name= name;
+        this.orders = new HashMap<>();
+        this.ordering=true;
+        this.customer=customer;
     }
 	
 	/**
@@ -116,5 +124,9 @@ public class Order {
 	public void endOrder() {
 		ordering=false;
 		customer.pay(this.getPrice());
+	}
+
+	public Customer getCustomer() {
+		return customer;
 	}
 }
