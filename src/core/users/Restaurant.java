@@ -53,7 +53,7 @@ public class Restaurant extends User implements SubscriberObservable{
 	 * @param itemType : type of the item
 	 * @param description : specific array of strings to describe
 	 * the item. Order is important as well as certain values.
-	 * The array is parsed by the menu object.
+	 * The first element must always indicate a unique name for the item.
 	 * @throws InvalidItemDescription : if the description array holds
 	 * invalid values.
 	 */

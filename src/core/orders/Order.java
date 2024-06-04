@@ -124,6 +124,9 @@ public class Order {
 	public void endOrder() {
 		ordering=false;
 		customer.pay(this.getPrice());
+		for (MenuItem item : orders.keySet()) {
+			item.orderFrequency=item.orderFrequency+orders.get(item);
+		}
 	}
 
 	public Customer getCustomer() {

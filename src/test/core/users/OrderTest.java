@@ -8,17 +8,16 @@ import core.exceptions.ItemNotInMenuException;
 import core.exceptions.ItemNotInOrderException;
 import core.orders.Order;
 import core.users.Restaurant;
+import core.users.Customer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class OrderTest {
     private Restaurant restaurant;
     private Order order;
+    private Order newOrder;
 
     @BeforeEach
     public void setUp() throws Exception{
@@ -29,6 +28,14 @@ class OrderTest {
 				"0",
 				"12.0"
 		};
+		
+		String[] newDish = new String[] {"dish",
+				"Maindish", 
+				"Standard",
+				"0",
+				"12.0"
+		};
+		
 		String[] saladDish = new String[] {"Salad",
 				"Starter", 
 				"vegetarian",
@@ -38,6 +45,8 @@ class OrderTest {
 
         restaurant.addMenuItem("dish", pastaDish);
         restaurant.addMenuItem("dish", saladDish);
+        restaurant.addMenuItem("dish", newDish);
+
 
         // Create a meal
         String[] SaladPastaMeal = new String[] {
@@ -45,9 +54,20 @@ class OrderTest {
         		saladDish[0],
         		pastaDish[0]
         };
+        
+        String[] dishPastaMeal = new String[] {
+        		"Dish and Pasta Meal",
+        		newDish[0],
+        		pastaDish[0]
+        };
+        
         restaurant.getMenu().addItem("meal", SaladPastaMeal);
+        restaurant.getMenu().addItem("meal", dishPastaMeal);
 
         order = new Order(restaurant, "My Order");
+        
+        Customer customer=new Customer("7amid","password");
+        newOrder = new Order(restaurant,"Order1",customer);
     }
 
     @Test
@@ -122,4 +142,16 @@ class OrderTest {
             e.printStackTrace();
         }
     }
+    @Test
+    public void testOrderFrequency() throws ItemNotInMenuException {
+            MenuItem newDish = restaurant.getMenu().getItem("dish");
+            MenuItem meal = restaurant.getMenu().getItem("Dish and Pasta Meal");
+
+            newOrder.addItem2Order(newDish);
+            newOrder.addItem2Order(newDish);
+            newOrder.addItem2Order(newDish);
+            newOrder.addItem2Order(meal);
+            newOrder.endOrder();
+            assertEquals(3, newDish.orderFrequency);
+            assertEquals(1,meal.orderFrequency);}
 }

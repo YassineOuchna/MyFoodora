@@ -9,10 +9,11 @@ public abstract class MenuItem {
 	}
 
 	public abstract double getPrice();
+	public int orderFrequency=0;
 
+	
 	public void setName(String name) {
 		this.name = name;
 	}
 	
-
 }
