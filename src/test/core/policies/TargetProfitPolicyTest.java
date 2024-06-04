@@ -28,7 +28,7 @@ public class TargetProfitPolicyTest {
         double markupPercentage = 0.20;
 
         double expectedDeliveryCost = (totalIncome - targetProfit - serviceFee) / (1 + markupPercentage);
-        double actualDeliveryCost = manager.calculateDeliveryCost(targetProfit, totalIncome, serviceFee, markupPercentage);
+        double actualDeliveryCost = manager.computeDeliveryCost(targetProfit, totalIncome, serviceFee, markupPercentage);
 
         assertEquals(expectedDeliveryCost, actualDeliveryCost, 0.001);
     }
@@ -41,7 +41,7 @@ public class TargetProfitPolicyTest {
         double markupPercentage = 0.20;
 
         double expectedServiceFee = totalIncome - targetProfit - (markupPercentage * deliveryCost) - deliveryCost;
-        double actualServiceFee = manager.calculateServiceFee(targetProfit, totalIncome, deliveryCost, markupPercentage);
+        double actualServiceFee = manager.computeServiceFee(targetProfit, totalIncome, deliveryCost, markupPercentage);
 
         assertEquals(expectedServiceFee, actualServiceFee, 0.001);
     }
@@ -54,7 +54,7 @@ public class TargetProfitPolicyTest {
         double serviceFee = 10;
 
         double expectedMarkup = (totalIncome - targetProfit - serviceFee - deliveryCost) / deliveryCost;
-        double actualMarkup = manager.calculateMarkup(targetProfit, totalIncome, deliveryCost, serviceFee);
+        double actualMarkup = manager.computeMarkup(targetProfit, totalIncome, deliveryCost, serviceFee);
 
         assertEquals(expectedMarkup, actualMarkup, 0.001);
     }
@@ -69,8 +69,8 @@ public class TargetProfitPolicyTest {
         double markupPercentage = 0.20;
         double deliveryCost = 5;
 
-        assertThrows(IllegalStateException.class, () -> manager.calculateDeliveryCost(targetProfit, totalIncome, serviceFee, markupPercentage));
-        assertThrows(IllegalStateException.class, () -> manager.calculateServiceFee(targetProfit, totalIncome, deliveryCost, markupPercentage));
-        assertThrows(IllegalStateException.class, () -> manager.calculateMarkup(targetProfit, totalIncome, deliveryCost, serviceFee));
+        assertThrows(IllegalStateException.class, () -> manager.computeDeliveryCost(targetProfit, totalIncome, serviceFee, markupPercentage));
+        assertThrows(IllegalStateException.class, () -> manager.computeServiceFee(targetProfit, totalIncome, deliveryCost, markupPercentage));
+        assertThrows(IllegalStateException.class, () -> manager.computeMarkup(targetProfit, totalIncome, deliveryCost, serviceFee));
     }
 }

@@ -57,21 +57,21 @@ public class Manager extends User{
 	/*
 	 * Computing profit parameters
 	 */
-	public double calculateDeliveryCost(double targetProfit, int totalIncome, double serviceFee, double markup) {
+	public double computeDeliveryCost(double targetProfit, int totalIncome, double serviceFee, double markup) {
         if (profitPolicy == null) {
             throw new IllegalStateException("No target profit policy set.");
         }
         return profitPolicy.computeDeliveryCost(targetProfit, totalIncome, serviceFee, markup);
     }
 
-    public double calculateServiceFee(double targetProfit, int totalIncome, double deliveryCost, double markup) {
+    public double computeServiceFee(double targetProfit, int totalIncome, double deliveryCost, double markup) {
         if (profitPolicy == null) {
             throw new IllegalStateException("No target profit policy set.");
         }
         return profitPolicy.computeServiceFee(targetProfit, totalIncome, deliveryCost, markup);
     }
 
-    public double calculateMarkup(double targetProfit, int totalIncome, double deliveryCost, double serviceFee) {
+    public double computeMarkup(double targetProfit, int totalIncome, double deliveryCost, double serviceFee) {
         if (profitPolicy == null) {
             throw new IllegalStateException("No target profit policy set.");
         }
