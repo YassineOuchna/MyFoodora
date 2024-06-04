@@ -1,4 +1,4 @@
-package test.core.users;
+package test.core.policies;
 
 import core.orders.Order;
 import core.policies.FastestDelivery;
@@ -55,4 +55,5 @@ class FastestDeliveryPolicyTest {
         assertNull(assignedCourier);
     }
 }
+
 
