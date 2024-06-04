@@ -1,6 +1,9 @@
 package core.users;
 import java.util.ArrayList;
 
+import core.fidelityCards.BasicFidelityCard;
+import core.fidelityCards.FidelityCard;
+
 
 
 public class Customer extends User implements SubscriberObserver{
@@ -24,7 +27,7 @@ public class Customer extends User implements SubscriberObserver{
 	
 	//private ArrayList<Order> orderHistory;
 	
-	//private FidelityPlan fidelityPlan;
+	private FidelityCard fidelityCard;
 	
 	/*
 	 * A customer 
@@ -39,11 +42,14 @@ public class Customer extends User implements SubscriberObserver{
 		super(newUsername, password);
 		
 		// Default address set to center (0,0)
-		this.setAddress(new double[] {0,0});
+		address = new double[] {0,0};
 
 		// By default, notifications are off
 		this.notificationsOn = false;
 		this.receivedEmails= new ArrayList<String>();
+		
+		// By default, basic fidelity plan 
+		fidelityCard = new BasicFidelityCard();
 	}
 	
 	@Override
@@ -52,6 +58,7 @@ public class Customer extends User implements SubscriberObserver{
 				+ "Username : "+ this.getUsername()+ "\n"
 				+ "ID : "+ super.getId() + "\n"
 				+ "Address : "+ this.address + "\n"
+				+ "Fidelity plan : " + this.fidelityCard + "\n"
 				+"Special offers notifications : " + (isNotificationsOn() ? "On" : "Off") + "\n";
 	}
 
@@ -91,6 +98,25 @@ public class Customer extends User implements SubscriberObserver{
 			this.receiveMail("New Special Offer available from restaurant"+ restaurantName+" : "+ specialOffer.toString());	
 		}
 	}
+	/**
+	 * Registers the customer to the specified fidelity card.
+	 * If the same fidelity plan is specified again, the customer 
+	 * keeps his old card with its advantages.
+	 * @param fidelityCard : a fidelity card.
+	 */
+	public void registerFidelityCard(FidelityCard fidelityCard) {
+		if (!(this.fidelityCard.getClass() == fidelityCard.getClass())) {
+			this.fidelityCard = fidelityCard;
+		}
+	}
+	
+	/**
+	 * Unregisters the customer from old fidelity plan.
+	 * The new plan is the default one given upon registration.
+	 */
+	public void unregisterFidelityCard() {
+		this.fidelityCard = new BasicFidelityCard();
+	}
 	public void receiveMail(String message) {
 		receivedEmails.add(message);
 	}
@@ -108,5 +134,10 @@ public class Customer extends User implements SubscriberObserver{
 	}
 	
 	public void pay(double price) {}
+
+	public FidelityCard getFidelityCard() {
+		return fidelityCard;
+	}
+
 
 }
