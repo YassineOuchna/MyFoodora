@@ -16,6 +16,4 @@ public abstract class MenuItem {
 		this.name = name;
 	}
 	
-	
-
 }
