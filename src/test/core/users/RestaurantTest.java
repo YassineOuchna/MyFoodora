@@ -2,13 +2,11 @@ package test.core.users;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.ArrayList;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import core.enums.DishCategory;
-import core.enums.FoodType;
+import core.exceptions.InvalidItemDescription;
 import core.exceptions.ItemNotInMenuException;
 import core.food.Menu;
 import core.users.Restaurant;
@@ -34,7 +32,7 @@ class RestaurantTest {
 				"1",
 				"2"
 		};
-		mcflurryDesc= new String[] {"mcflurry",
+		mcflurryDesc= new String[] {"Mcflurry",
 				"dessert", 
 				"Standard",
 				"0",
@@ -43,7 +41,7 @@ class RestaurantTest {
 	}
 
 	@Test
-	void testAddDish() {
+	void testAddDish() throws InvalidItemDescription{
 		restaurant.addMenuItem("dish", mcflurryDesc);
 		restaurant.addMenuItem("dish", bigMacDesc);
 		restaurant.addMenuItem("dish", ChickenNuggiesDesc);
@@ -54,7 +52,7 @@ class RestaurantTest {
 	}
 
 	@Test
-	void testAddMeal() {
+	void testAddMeal() throws InvalidItemDescription{
 
 		// Adding dishes first 
 		restaurant.addMenuItem("dish", mcflurryDesc);
@@ -68,62 +66,33 @@ class RestaurantTest {
 				ChickenNuggiesDesc[0]
 		};
 		
-		// Adding should go through
+		// Adding should go through (no exception)
 		try {
 			restaurant.addMenuItem("meal", mealDesc);
 		} catch (Exception e) {
 		}
 
 		Menu menu = restaurant.getMenu();
-		assertTrue(menu.getItems().containsKey("Big Mac Menu"));
+		assertTrue(menu.getItems().containsKey("Big Mac Meal"));
+		
 		
 		// Testing adding a meal with non Existent dishes
-		ArrayList<String> wrongDishNames = new ArrayList<String>();
-		wrongDishNames.add("Chicken Nuggies");
-		wrongDishNames.add("Dish6977");
-		assertThrows(ItemNotInMenuException.class, () -> restaurant.addMenuItem("meal21", wrongDishNames));
-
+		String[] wrongDishNames = new String[] {
+		"Chicken Nuggies", "Dish9677"};
+		assertThrows(InvalidItemDescription.class, () -> restaurant.addMenuItem("meal21", wrongDishNames));
 	}
 
 	@Test
-	void testRemoveDish() {
-		restaurant.addDish("Dish0", 7.99, true, FoodType.STANDARD, DishCategory.MAINDISH);
-		try {
-			restaurant.removeDish("Dish0");
-		} catch (Exception e) {
-		}
+	void testRemoveMenuItem() throws InvalidItemDescription, ItemNotInMenuException {
+		restaurant.addMenuItem("dish", mcflurryDesc);
+		restaurant.removeItem("Mcflurry");
 		Menu menu = restaurant.getMenu();
-		assertFalse(menu.getDishes().containsKey("Dish0"));
+		assertFalse(menu.getItems().containsKey("Dish0"));
 	}
 
 	@Test 
-	void testRemoveDishNotInMenu() {
-		assertThrows(ItemNotInMenuException.class, () -> restaurant.removeDish("Dish57"));
+	void testRemoveItemNotInMenu() {
+		assertThrows(ItemNotInMenuException.class, () -> restaurant.removeItem("Dish57"));
 	}
 
-	@Test
-	void testRemoveMeal() {
-		restaurant.addDish("dish1", 0, false, null, null);
-		restaurant.addDish("dish2", 0, false, null, null);
-		restaurant.addDish("dish3", 0, false, null, null);
-		ArrayList<String> dishNames = new ArrayList<String>();
-		dishNames.add("dish1");
-		dishNames.add("dish2");
-		try {
-			restaurant.addMeal("meal0", dishNames);
-		} catch (Exception e) {
-		}
-		
-		try {
-			restaurant.removeMeal("meal0");
-		} catch (Exception e) {
-		}
-		Menu menu = restaurant.getMenu();
-		assertFalse(menu.getMeals().containsKey("meal0"));
-	}
-	
-	@Test
-	void testRemoveMealNotInMenu() {
-		assertThrows(ItemNotInMenuException.class, () -> restaurant.removeMeal("Meal57"));
-	}
 }

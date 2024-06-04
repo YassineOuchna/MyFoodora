@@ -56,9 +56,7 @@ public class Menu {
 			} else {
 				throw new InvalidItemDescription("Incorrect length for the description");
 			}
-		}
-
-		if (itemType.equalsIgnoreCase("MEAL")) {
+		} else if (itemType.equalsIgnoreCase("MEAL")) {
 			String name = description[0];
 			ArrayList<Dish> dishList = new ArrayList<Dish>();
 			int n = description.length;
@@ -75,6 +73,8 @@ public class Menu {
 			
 			Meal meal = new Meal(name, dishList);
 			items.put(name, meal);
+		} else {
+			throw new InvalidItemDescription("Invalid item type : " + itemType + " Not in menu");
 		}
 	}
 

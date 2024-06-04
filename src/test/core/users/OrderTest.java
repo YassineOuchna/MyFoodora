@@ -3,7 +3,6 @@ package test.core.users;
 import core.enums.DishCategory;
 import core.enums.FoodType;
 import core.food.Dish;
-import core.food.Meal;
 import core.food.MenuItem;
 import core.exceptions.ItemNotInMenuException;
 import core.exceptions.ItemNotInOrderException;
@@ -22,17 +21,31 @@ class OrderTest {
     private Order order;
 
     @BeforeEach
-    public void setUp() throws ItemNotInMenuException {
+    public void setUp() throws Exception{
         restaurant = new Restaurant("restaurantUser", "password");
-        restaurant.addDish("Pasta", 12.0, false, FoodType.STANDARD, DishCategory.MAINDISH);
-        restaurant.addDish("Salad", 8.0, false, FoodType.VEGETARIAN, DishCategory.STARTER);
+		String[] pastaDish = new String[] {"Pasta",
+				"Maindish", 
+				"Standard",
+				"0",
+				"12.0"
+		};
+		String[] saladDish = new String[] {"Salad",
+				"Starter", 
+				"vegetarian",
+				"0",
+				"8.0"
+		};
+
+        restaurant.addMenuItem("dish", pastaDish);
+        restaurant.addMenuItem("dish", saladDish);
 
         // Create a meal
-        ArrayList<Dish> dishes = new ArrayList<>();
-        dishes.add(restaurant.getMenu().getDish("Pasta"));
-        dishes.add(restaurant.getMenu().getDish("Salad"));
-        Meal meal = new Meal("Pasta and Salad Meal", dishes);
-        restaurant.getMenu().addMeal(meal);
+        String[] SaladPastaMeal = new String[] {
+        		"Salad and Pasta Meal",
+        		saladDish[0],
+        		pastaDish[0]
+        };
+        restaurant.getMenu().addItem("meal", SaladPastaMeal);
 
         order = new Order(restaurant, "My Order");
     }
