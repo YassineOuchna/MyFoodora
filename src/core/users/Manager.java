@@ -1,6 +1,14 @@
 package core.users;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import core.orders.Order;
 import core.policies.*;
+import core.comparators.*;
 
 public class Manager extends User{
 	
@@ -78,6 +86,37 @@ public class Manager extends User{
         return profitPolicy.computeMarkup(targetProfit, totalIncome, deliveryCost, serviceFee);
     }
 
-		
-	
+	/*
+	 * Obtaining all delivered orders
+	 */
+    public Map<Date, Order> getAllDeliveredOrders() {
+        return Order.getAllDeliveredOrders();
+    }
+    /*
+     * Obtaining delivered Orders between Date date1 and Date date2
+     */
+    public Map<Date, Order> getDeliveredOrders(Date date1, Date date2) {
+        Map<Date, Order> deliveredOrders = new HashMap<>();
+        for (Map.Entry<Date, Order> entry : Order.getAllDeliveredOrders().entrySet()) {
+            if (!entry.getKey().before(date1) && !entry.getKey().after(date2)) {
+                deliveredOrders.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return deliveredOrders;
+    }
+	/*
+	 * Obtaining all delivered orders in the last month
+	 */
+    public Map<Date, Order> getLastMonthOrders() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, -1);  
+        Date lastMonth = cal.getTime();
+        return getDeliveredOrders(lastMonth,new Date());  
+    }
+    public ArrayList<Restaurant> showRestaurantTop(){
+    	ArrayList<Restaurant> allRestaurants = Restaurant.getAllRestaurants();
+        allRestaurants.sort(new RestaurantComparator());
+        Collections.reverse(allRestaurants);  // Sort in descending order
+        return allRestaurants;
+    }
 }

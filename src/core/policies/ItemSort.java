@@ -1,9 +1,9 @@
 package core.policies;
 
 import java.util.ArrayList;
+import core.comparators.*;
 
 import core.food.MenuItem;
-import core.food.MenuItemComparator;
 
 public class ItemSort implements OrderSortingPolicy{
 

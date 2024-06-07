@@ -8,6 +8,7 @@ import core.users.Restaurant;
 import core.users.Courrier;
 import core.users.Customer;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +26,21 @@ public class Order {
 	 * menu item.
 	 */
     private Map<MenuItem, Integer> orders;
+    /*
+     * An order can be expanded as long as it has not ended yet, 
+     * ordering follows the state of the order 
+     */
     private boolean ordering=true;
+    
+    /*
+     * An order is equipped with a Date
+     */
+    private Date date;
+    
+    /*
+     * We need to store all delivered Orders
+     */
+    private static Map<Date, Order> deliveredOrders = new HashMap<Date,Order>();
 
     
     
@@ -35,6 +50,7 @@ public class Order {
         this.name= name;
         this.orders = new HashMap<>();
         this.ordering=true;
+        this.date= new Date();
     }
 	public Order(Restaurant restaurant,String name, Customer customer) {
         this.restaurant = restaurant;
@@ -42,6 +58,7 @@ public class Order {
         this.orders = new HashMap<>();
         this.ordering=true;
         this.customer=customer;
+        this.date= new Date();
     }
 	
 	/**
@@ -110,6 +127,12 @@ public class Order {
 	public void setName(String name) {
 		this.name = name;
 	}
+	public static Map<Date, Order> getAllDeliveredOrders() {
+        return deliveredOrders;
+    }
+	public Customer getCustomer() {
+		return customer;
+	}
 	
 	/**
 	 * Finds and returns a courier for the order delivery
@@ -127,9 +150,12 @@ public class Order {
 		for (MenuItem item : orders.keySet()) {
 			item.orderFrequency=item.orderFrequency+orders.get(item);
 		}
+		deliveredOrders.put(this.date, this);
+		restaurant.addDeliveredOrder();
+	}
+	public Date getDate() {
+		return date;
 	}
 
-	public Customer getCustomer() {
-		return customer;
-	}
+	
 }

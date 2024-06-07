@@ -1,6 +1,8 @@
-package core.food;
+package core.comparators;
 
 import java.util.Comparator;
+
+import core.food.MenuItem;
 
 public class MenuItemComparator implements Comparator<MenuItem>{
 
