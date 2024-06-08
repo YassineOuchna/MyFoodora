@@ -14,6 +14,9 @@ public abstract class FidelityCard{
 	 * as follows : finalPrice = (1 - fidelityDiscount) * originalPrice
 	 */
 	protected double fidelityDiscount;
+	public double getFidelityDiscount() {
+		return fidelityDiscount;
+	}
 	
 	/**
 	 * Updates characteristics of the card

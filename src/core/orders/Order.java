@@ -124,6 +124,7 @@ public class Order {
 	public void endOrder() {
 		ordering=false;
 		customer.pay(this.getPrice());
+		customer.getFidelityCard().updateCard(this);
 	}
 
 	public Customer getCustomer() {

@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import core.users.Customer;
-import core.users.User;
 
 class testCustomer {
 

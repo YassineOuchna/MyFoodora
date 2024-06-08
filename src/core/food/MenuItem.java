@@ -10,7 +10,7 @@ public abstract class MenuItem {
 
 	public abstract double getPrice();
 
-	public void setName(String name) {
+	protected void setName(String name) {
 		this.name = name;
 	}
 	

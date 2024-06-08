@@ -41,7 +41,7 @@ public class Customer extends User implements SubscriberObserver{
 	public Customer(String newUsername, String password) {
 		super(newUsername, password);
 		
-		// Default address set to center (0,0)
+		// Default address set to origin (0,0)
 		address = new double[] {0,0};
 
 		// By default, notifications are off
