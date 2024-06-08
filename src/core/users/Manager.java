@@ -3,8 +3,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import core.orders.Order;
 import core.policies.*;
@@ -18,12 +16,18 @@ public class Manager extends User{
 	public Manager(String newUsername, String password) {
 		super(newUsername, password);
 	}
+	public Manager(String username, String password,String name, String surname) {
+		super(username, password);
+		super.setName(name);
+		super.setSurname(surname);
+	}
 	
 	public void setDeliveryPolicy(DeliveryPolicy deliveryPolicy) {
 		MyFoodora.setDeliveryPolicy(deliveryPolicy);
 	}
 	
-	public void addUser(User u) {}
+	public void addUser(User u) {
+	}
 	public void removeUser(User u) {}
 	public void activateUser(User u) {}
 	public void desactivateUser(User u) {}
@@ -33,59 +37,45 @@ public class Manager extends User{
 	public double averageIncomeByCustomer(Date start, Date end) {return 0;}
 	
 	
-	public void setProfitPolicy(TargetProfitPolicy profitPolicy) {
-		MyFoodora.setProfitPolicy(profitPolicy);
-	}
 	
-	/*
-	 * Computing profit parameters
+	/**
+	 * Computes the varying profit related parameter according to 
+	 * the app's target profit policy and changes it to the new value.
+	 * @param targetProfit : target profit policy of the MyFooora app.
 	 */
-	public double computeDeliveryCost(double targetProfit, int totalIncome, double serviceFee, double markup) {
+	public void meetTargetProfit(double targetProfit) {
 		TargetProfitPolicy profitPolicy = MyFoodora.getProfitPolicy();
         if (profitPolicy == null) {
             throw new IllegalStateException("No target profit policy set.");
         }
-        return profitPolicy.computeDeliveryCost(targetProfit, totalIncome, serviceFee, markup);
+        // computes the parameter and sets it up
+        profitPolicy.meetTargetProfit(targetProfit);
     }
 
-    public double computeServiceFee(double targetProfit, int totalIncome, double deliveryCost, double markup) {
-		TargetProfitPolicy profitPolicy = MyFoodora.getProfitPolicy();
-        if (profitPolicy == null) {
-            throw new IllegalStateException("No target profit policy set.");
-        }
-        return profitPolicy.computeServiceFee(targetProfit, totalIncome, deliveryCost, markup);
-    }
-
-    public double computeMarkup(double targetProfit, int totalIncome, double deliveryCost, double serviceFee) {
-		TargetProfitPolicy profitPolicy = MyFoodora.getProfitPolicy();
-        if (profitPolicy == null) {
-            throw new IllegalStateException("No target profit policy set.");
-        }
-        return profitPolicy.computeMarkup(targetProfit, totalIncome, deliveryCost, serviceFee);
-    }
 
 	/*
 	 * Obtaining all delivered orders
 	 */
-    public Map<Date, Order> getAllDeliveredOrders() {
+    public ArrayList<Order> getAllDeliveredOrders() {
         return Order.getAllDeliveredOrders();
     }
     /*
      * Obtaining delivered Orders between Date date1 and Date date2
      */
-    public Map<Date, Order> getDeliveredOrders(Date date1, Date date2) {
-        Map<Date, Order> deliveredOrders = new HashMap<>();
-        for (Map.Entry<Date, Order> entry : Order.getAllDeliveredOrders().entrySet()) {
-            if (!entry.getKey().before(date1) && !entry.getKey().after(date2)) {
-                deliveredOrders.put(entry.getKey(), entry.getValue());
-            }
-        }
+    public ArrayList<Order> getDeliveredOrders(Date date1, Date date2) {
+    	ArrayList<Order> deliveredOrders = new ArrayList<Order>();
+    	for (Order o : Order.getAllDeliveredOrders()) {
+    		if (o.getDate().after(date1) && o.getDate().before(date2)) {
+    			deliveredOrders.add(o);
+    		}
+    	}
         return deliveredOrders;
     }
-	/*
-	 * Obtaining all delivered orders in the last month
-	 */
-    public Map<Date, Order> getLastMonthOrders() {
+    /**
+     * Gets a last month's orders on the MyFoodora app
+     * @return ArrayList<Order> containing last month's orders
+     */
+    public ArrayList<Order> getLastMonthOrders() {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MONTH, -1);  
         Date lastMonth = cal.getTime();

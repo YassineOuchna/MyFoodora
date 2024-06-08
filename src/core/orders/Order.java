@@ -42,7 +42,7 @@ public class Order {
     /*
      * We need to store all delivered Orders
      */
-    private static Map<Date, Order> deliveredOrders = new HashMap<Date,Order>();
+    private static ArrayList<Order> deliveredOrders = new ArrayList<Order>();
 
     
     
@@ -129,7 +129,7 @@ public class Order {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public static Map<Date, Order> getAllDeliveredOrders() {
+	public static ArrayList<Order> getAllDeliveredOrders() {
         return deliveredOrders;
     }
 	public Customer getCustomer() {
@@ -165,7 +165,7 @@ public class Order {
 		for (MenuItem item : orderItems.keySet()) {
 			item.orderFrequency=item.orderFrequency+orderItems.get(item);
 		}
-		deliveredOrders.put(this.date, this);
+		deliveredOrders.add(this);
 		restaurant.addDeliveredOrder();
 	}
 	public Date getDate() {

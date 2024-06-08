@@ -1,7 +1,15 @@
 package core.policies;
 
 public interface TargetProfitPolicy {
-	public double computeDeliveryCost(double targetProfit, int totalIncome, double serviceFee, double markup);
-	public double computeServiceFee(double targetProfit, int totalIncome, double deliveryCost, double markup);
-	public double computeMarkup(double targetProfit, int totalIncome, double deliveryCost, double serviceFee);
+	
+	/**
+	 * Computes the delivery cost or 
+	 * the service fee or the markup percentage needed
+	 * to meet a target profit this month and sets it up.
+	 * @param targetProfit : target profit for this month. 
+	 * @return a double representing either the delivery fee,
+	 * service fee or the markup percentage depending on the policy.
+	 */
+	public double meetTargetProfit(double targetProfit);
+	
 }

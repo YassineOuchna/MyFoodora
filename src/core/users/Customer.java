@@ -38,6 +38,22 @@ public class Customer extends User implements SubscriberObserver{
 	private String email;
 	
 	
+	public Customer(String newUsername, String password, String name, String surname) {
+		super(newUsername, password);
+		super.setName(name);
+		super.setSurname(surname);
+		
+		// Default address set to origin (0,0)
+		address = new double[] {0,0};
+
+		// By default, notifications are off
+		this.notificationsOn = false;
+		this.receivedEmails= new ArrayList<String>();
+		
+		// By default, basic fidelity plan 
+		fidelityCard = new BasicFidelityCard();
+	}
+
 	public Customer(String newUsername, String password) {
 		super(newUsername, password);
 		

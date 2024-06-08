@@ -1,8 +1,9 @@
 package core.users;
 
 public class User {
-	// Each user has a surname
+	// Each user has a name and a surname
 	private String surname;
+	private String name;
 	
 	public String getSurname() {
 		return surname;
@@ -24,8 +25,10 @@ public class User {
 	public User(String newUsername, String password) {
 		this.username = newUsername;
 		
-		// By default, surname is the same as the username
-		this.surname = username;
+		// By default, name is the same as the username
+		// and an empty surname
+		this.name = username;
+		this.surname = "";
 		
 		// hashing the password for security reasons
 		this.hashedPassword = password.hashCode();
@@ -53,5 +56,13 @@ public class User {
 
 	public String getUsername() {
 		return username;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }
