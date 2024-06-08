@@ -12,7 +12,6 @@ import core.users.Customer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Order {
@@ -28,7 +27,7 @@ public class Order {
 	 * equipped with the quantity of each ordered
 	 * menu item.
 	 */
-    private Map<MenuItem, Integer> orders;
+    private Map<MenuItem, Integer> orderItems;
     /*
      * An order can be expanded as long as it has not ended yet, 
      * ordering follows the state of the order 
@@ -51,14 +50,14 @@ public class Order {
 	public Order(Restaurant restaurant,String name) {
         this.restaurant = restaurant;
         this.name= name;
-        this.orders = new HashMap<>();
+        this.orderItems = new HashMap<>();
         this.ordering=true;
         this.date= new Date();
     }
 	public Order(Restaurant restaurant,String name, Customer customer) {
         this.restaurant = restaurant;
         this.name= name;
-        this.orders = new HashMap<>();
+        this.orderItems = new HashMap<>();
         this.ordering=true;
         this.customer=customer;
         this.date= new Date();
@@ -76,7 +75,7 @@ public class Order {
         if (!restaurant.getMenu().getItems().containsKey(item.getName())) {
             throw new ItemNotInMenuException("Item " + item.getName() + " is not available in the restaurant's menu.");
         }
-        orders.put(item, orders.getOrDefault(item, 0) + 1);
+        orderItems.put(item, orderItems.getOrDefault(item, 0) + 1);
     }
 
     /**
@@ -88,14 +87,14 @@ public class Order {
     	if (!ordering) {
             throw new IllegalStateException("Cannot remove item from order. Ordering has ended.");
         }
-        if (!orders.containsKey(item)) {
+        if (!orderItems.containsKey(item)) {
             throw new ItemNotInOrderException("Item " + item.getName() + " is not in the order.");
         }
-        int currentQuantity = orders.get(item);
+        int currentQuantity = orderItems.get(item);
         if (currentQuantity == 1) {
-            orders.remove(item);
+            orderItems.remove(item);
         } else {
-            orders.put(item, currentQuantity - 1);
+            orderItems.put(item, currentQuantity - 1);
         }
     }
     
@@ -106,7 +105,7 @@ public class Order {
     
     public double getPrice() {
     	double totalPrice = 0;
-        for (Map.Entry<MenuItem, Integer> entry : orders.entrySet()) {
+        for (Map.Entry<MenuItem, Integer> entry : orderItems.entrySet()) {
             totalPrice += entry.getKey().getPrice() * entry.getValue();
         }
         return totalPrice;
@@ -120,7 +119,7 @@ public class Order {
     }
 
     public Map<MenuItem, Integer> getOrders() {
-		return orders;
+		return orderItems;
 	}
     
     public String getName() {
@@ -139,7 +138,7 @@ public class Order {
 	
 	/**
 	 * Finds and returns a courier for the order delivery
-	 * @return Courrier courier
+	 * @return Courier courier
 	 */
 	
 	public Courrier findDeliverer(){
@@ -163,8 +162,8 @@ public class Order {
 		ordering=false;
 		customer.pay(this.getPrice());
 		customer.getFidelityCard().updateCard(this);
-		for (MenuItem item : orders.keySet()) {
-			item.orderFrequency=item.orderFrequency+orders.get(item);
+		for (MenuItem item : orderItems.keySet()) {
+			item.orderFrequency=item.orderFrequency+orderItems.get(item);
 		}
 		deliveredOrders.put(this.date, this);
 		restaurant.addDeliveredOrder();

@@ -19,5 +19,4 @@ public class MyFoodora {
 	public static void setProfitPolicy(TargetProfitPolicy profitPolicy) {
 		MyFoodora.profitPolicy = profitPolicy;
 	}
-
 }

@@ -1,6 +1,7 @@
 package test.core.policies;
 
 import core.policies.TargetProfitPolicy;
+import core.MyFoodora;
 import core.policies.ConcreteProfitPolicy;
 import core.users.Manager;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,13 +12,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class TargetProfitPolicyTest {
-    private Manager manager;
-    private TargetProfitPolicy policy;
+    Manager manager;
+    TargetProfitPolicy policy;
 
     @BeforeEach
     public void setUp() {
         policy = new ConcreteProfitPolicy();
-        manager = new Manager("admin", "password", policy);
+        manager = new Manager("admin", "password");
+        manager.setProfitPolicy(policy);
     }
 
     @Test
@@ -61,7 +63,7 @@ public class TargetProfitPolicyTest {
 
     @Test
     public void testCalculateWithoutPolicy() {
-        manager = new Manager("admin", "password"); // Manager without policy
+    	MyFoodora.setProfitPolicy(null);
 
         double targetProfit = 5000;
         int totalIncome = 10000;

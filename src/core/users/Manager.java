@@ -13,12 +13,6 @@ import core.comparators.*;
 
 public class Manager extends User{
 	
-	/*
-	 * The manager is the one who sets the policy (i.e strategy) for the delivery and the profit
-	 */
-	private static DeliveryPolicy deliveryPolicy;
-	private static TargetProfitPolicy profitPolicy;
-
 	
 
 	public Manager(String newUsername, String password) {
@@ -47,6 +41,7 @@ public class Manager extends User{
 	 * Computing profit parameters
 	 */
 	public double computeDeliveryCost(double targetProfit, int totalIncome, double serviceFee, double markup) {
+		TargetProfitPolicy profitPolicy = MyFoodora.getProfitPolicy();
         if (profitPolicy == null) {
             throw new IllegalStateException("No target profit policy set.");
         }
@@ -54,6 +49,7 @@ public class Manager extends User{
     }
 
     public double computeServiceFee(double targetProfit, int totalIncome, double deliveryCost, double markup) {
+		TargetProfitPolicy profitPolicy = MyFoodora.getProfitPolicy();
         if (profitPolicy == null) {
             throw new IllegalStateException("No target profit policy set.");
         }
@@ -61,6 +57,7 @@ public class Manager extends User{
     }
 
     public double computeMarkup(double targetProfit, int totalIncome, double deliveryCost, double serviceFee) {
+		TargetProfitPolicy profitPolicy = MyFoodora.getProfitPolicy();
         if (profitPolicy == null) {
             throw new IllegalStateException("No target profit policy set.");
         }

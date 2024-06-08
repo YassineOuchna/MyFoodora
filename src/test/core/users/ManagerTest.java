@@ -1,5 +1,6 @@
 package test.core.users;
 
+import core.MyFoodora;
 import core.orders.Order;
 import core.policies.DeliveryPolicy;
 import core.policies.FastestDelivery;
@@ -47,7 +48,7 @@ class ManagerTest {
         DeliveryPolicy fastestDelivery = new FastestDelivery();
         manager.setDeliveryPolicy(fastestDelivery);
 
-        Courrier assignedCourier = manager.getDeliveryPolicy().assignCourrier(courriers, order);
+        Courrier assignedCourier = MyFoodora.getDeliveryPolicy().assignCourrier(courriers, order);
         assertNotNull(assignedCourier);
         assertEquals("Courier1", assignedCourier.getUsername());
     }
@@ -57,7 +58,7 @@ class ManagerTest {
         DeliveryPolicy fairOccupationDelivery = new FairOcuppationDelivery();
         manager.setDeliveryPolicy(fairOccupationDelivery);
 
-        Courrier assignedCourier = manager.getDeliveryPolicy().assignCourrier(courriers, order);
+        Courrier assignedCourier = MyFoodora.getDeliveryPolicy().assignCourrier(courriers, order);
         assertNotNull(assignedCourier);
         assertEquals("Courier3", assignedCourier.getUsername());
     }
