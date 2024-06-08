@@ -10,6 +10,10 @@ public class BasicFidelityCard extends FidelityCard{
 	}
 
 	@Override
+	public String toString() {
+		return "Basic Fidelity Card";
+	}
+	@Override
 	public void updateCard(Order order) {
 	}
 

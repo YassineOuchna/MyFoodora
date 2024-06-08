@@ -36,6 +36,11 @@ public class LotteryFidelityCard extends FidelityCard{
 	public void setChance(int chance) {
 		this.chance = chance;
 	}
+	
+	@Override
+	public String toString() {
+		return "Lottery Fidelity Plan : "+ (lotteryWon ? "Lottery Won !" : "Better luck next time!");
+	}
 
 	
 	@Override

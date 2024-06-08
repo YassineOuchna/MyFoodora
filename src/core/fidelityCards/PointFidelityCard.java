@@ -49,6 +49,7 @@ public class PointFidelityCard extends FidelityCard{
 	}
 	
 	
+	@Override
 	public String toString() {
 		return "" + name + "\nPoints : " + points +
 				"\nDiscount on next order : "+ fidelityDiscount + "%";
