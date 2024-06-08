@@ -32,7 +32,6 @@ public class Restaurant extends User {
 		// Default discount values
 		this.genericDiscount = 0.05;
 		this.specialDiscount= 0.1;
-		ArrayList<SubscriberObserver>list = new ArrayList<SubscriberObserver>();
 		this.numDeliveredOrders=0;
 		allRestaurants.add(this);
 	}
@@ -47,7 +46,6 @@ public class Restaurant extends User {
 		// Default discount values
 		this.genericDiscount = 0.05;
 		this.specialDiscount= 0.1;
-		ArrayList<SubscriberObserver>list = new ArrayList<SubscriberObserver>();
 		this.numDeliveredOrders=0;
 		allRestaurants.add(this);
 	}
@@ -110,7 +108,7 @@ public class Restaurant extends User {
 	public void setSpecialOffer(Meal specialOffer) {
 		MyFoodora app = MyFoodora.getInstance();
 		menu.setSpecialOffer(specialOffer);
-		app.notifySubscribers(this.getName(), specialOffer);;
+		app.notifySubscribers(this.getName(), specialOffer);
 	}
 
 

@@ -15,6 +15,7 @@ public class Courrier extends User{
 	
 	public Courrier(String newUsername, String password) {
 		super(newUsername, password);
+		completedDeliveries=0;
 	}
 	public Courrier(String newUsername,String password, double[] position,boolean onDuty,int completedDeliveries) {
 		super(newUsername, password);

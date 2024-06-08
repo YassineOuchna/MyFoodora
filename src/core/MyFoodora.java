@@ -10,6 +10,9 @@ import core.food.Meal;
 import core.orders.Order;
 import core.policies.DeliveryPolicy;
 import core.policies.TargetProfitPolicy;
+import core.users.Courrier;
+import core.users.Customer;
+import core.users.Restaurant;
 import core.users.SubscriberObservable;
 import core.users.SubscriberObserver;
 import core.users.User;
@@ -182,4 +185,30 @@ public class MyFoodora implements SubscriberObservable{
 				ob.updateSubscriber(restaurantName, specialOffer);
 		}
 	}
+	
+	
+	
+
+    public User login(String username, String password) throws Exception {
+        for (User user : users) {
+            if (user.getUsername().equals(username) && user.getHashedPassword()==password.hashCode()) {
+                return user;
+            }
+        }
+        throw new Exception("Login failed");
+    }
+
+    // Other necessary methods
+
+    public void setUserLastID(int lastID) {
+        this.userLastID = lastID;
+    }
+
+    public int getUserLastID() {
+        return this.userLastID;
+    }
+
+    public List<User> getUsers() {
+        return users;
+    }
 }
