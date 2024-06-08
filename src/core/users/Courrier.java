@@ -9,6 +9,9 @@ public class Courrier extends User{
 	private String phoneNumber;
 	private Order[] deliveredOrders;
 	private boolean onDuty;
+	/*
+	 * comment
+	 */
 	
 	public Courrier(String newUsername, String password) {
 		super(newUsername, password);
