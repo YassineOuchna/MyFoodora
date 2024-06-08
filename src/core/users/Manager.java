@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 
 import core.orders.Order;
 import core.policies.*;
@@ -25,16 +26,42 @@ public class Manager extends User{
 	
 	
 	public void addUser(User u) {
-		app.getUsers().add(u);
+		app.addUser(u);
 	}
-	public void removeUser(User u) {}
+	public void removeUser(User u) {
+		app.removeUser(u);
+	}
 
-	public void activateUser(User u) {}
-	public void desactivateUser(User u) {}
-	public void setServiceFee(double fee) {}
-	public double totalProfit(Date start,Date end) {return 0;}
-	public double totalIncome(Date start, Date end) {return 0;}
-	public double averageIncomeByCustomer(Date start, Date end) {return 0;}
+	public void activateUser(User u) {
+		u.setActive(true);
+	}
+	public void desactivateUser(User u) {
+		u.setActive(false);
+	}
+	public void setServiceFee(double fee) {
+		app.setServiceFee(fee);
+	}
+	public double totalProfit(Date start,Date end) {
+		return app.computeTotalProfit(start, end);
+	}
+	public double totalIncome(Date start, Date end) {
+		return app.computeTotalIncome(start, end);
+	}
+	public double averageIncomeByCustomer(Date start, Date end) {
+		// total income
+		double totalIncome = totalIncome(start, end);
+		// Finding the number of customers 
+		HashSet<Integer> realCustomers = new HashSet<Integer>();
+		for (Order o : app.getCompletedOrders()) {
+			Customer c = o.getCustomer();
+			if (o.getDate().after(start) && o.getDate().before(end)) {
+				if (!realCustomers.contains(c.getId())) {
+					realCustomers.add(c.getId());
+				}
+			}
+		}
+		return totalIncome / realCustomers.size();
+	}
 	
 	
 	

@@ -5,6 +5,9 @@ public class User {
 	private String surname;
 	private String name;
 	
+	// User can be activated or deactivated
+	private boolean isActive;
+	
 	public String getSurname() {
 		return surname;
 	}
@@ -36,6 +39,9 @@ public class User {
 		// IDs start from 1 
 		nextId = nextId + 1;
 		this.id = nextId;
+		
+		// User is active by default
+		isActive = false;
 	}
 	
 	public void login() {
@@ -64,5 +70,13 @@ public class User {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
 	}
 }

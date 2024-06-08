@@ -14,18 +14,35 @@ public class MyFoodora {
 	// Array of global users of MyFoodoraApp
 	private ArrayList<User> users;
 	// HashMap of user IDs and their hashed passwords
-	private HashMap<Integer, String> hashedPasswords;
+	private HashMap<Integer, Integer> hashedPasswords;
 	
 	// List of all the global orders on the app
 	private ArrayList<Order> completedOrders;
 	
+	// Policies 
+	private  DeliveryPolicy deliveryPolicy;
+	private  TargetProfitPolicy profitPolicy;
+
 	// Fees and mark-up percentage
 	private double markupPercentage;
+	private double deliveryCost;
+	private double serviceFee;
 	
 	private  static MyFoodora myFoodoraInstance;
 
+	private MyFoodora(double markupPercentage, double deliveryCost, double serviceFee) {
+		completedOrders = new ArrayList<Order>();
+		users = new ArrayList<User>();
+		hashedPasswords = new HashMap<Integer, Integer>();
+		this.markupPercentage = markupPercentage;
+		this.deliveryCost = deliveryCost;
+		this.serviceFee = serviceFee;
+	}
+
 	private MyFoodora() {
 		completedOrders = new ArrayList<Order>();
+		users = new ArrayList<User>();
+		hashedPasswords = new HashMap<Integer, Integer>();
 	}
 	
 	public static MyFoodora getInstance() {
@@ -35,6 +52,20 @@ public class MyFoodora {
 		return myFoodoraInstance;
 	}
 	
+	public void addUser(User u) {
+		users.add(u);
+		hashedPasswords.put(u.getId(), u.getHashedPassword());
+	}
+	
+	public void removeUser(User u) {
+		for (User usr: users) {
+			if (usr.getId() == u.getId()) {
+				users.remove(u);
+				hashedPasswords.remove(u.getId());
+			}
+		}
+	}
+
 	
 	public double computeTotalIncome() {
 		double total = 0;
@@ -90,19 +121,12 @@ public class MyFoodora {
 	public ArrayList<User> getUsers() {
 		return users;
 	}
-	public HashMap<Integer, String> getHashedPasswords() {
+	public HashMap<Integer, Integer> getHashedPasswords() {
 		return hashedPasswords;
 	}
 	public ArrayList<Order> getCompletedOrders() {
 		return completedOrders;
 	}
-	private double deliveryCost;
-	private double serviceFee;
-	
-	
-	
-	private  DeliveryPolicy deliveryPolicy;
-	private  TargetProfitPolicy profitPolicy;
 	
 	public  DeliveryPolicy getDeliveryPolicy() {
 		return deliveryPolicy;
