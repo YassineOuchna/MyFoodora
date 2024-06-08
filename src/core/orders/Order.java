@@ -1,15 +1,18 @@
 package core.orders;
 
 import core.food.*;
-
+import core.policies.DeliveryPolicy;
+import core.MyFoodora;
 import core.exceptions.ItemNotInMenuException;
 import core.exceptions.ItemNotInOrderException;
 import core.users.Restaurant;
 import core.users.Courrier;
 import core.users.Customer;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Order {
@@ -139,7 +142,19 @@ public class Order {
 	 * @return Courrier courier
 	 */
 	
-	public Courrier findDeliverer() {return null;}
+	public Courrier findDeliverer(){
+		ArrayList<Courrier> availableCourriers = Courrier.getAvailableCourriers();
+        DeliveryPolicy policy = MyFoodora.getDeliveryPolicy();
+        Courrier selectedCourier = policy.assignCourrier(availableCourriers, this);
+
+        if (selectedCourier != null) {
+            Call call = new Call(this);
+            if (selectedCourier.acceptDeliveryCall(call)) {
+                return selectedCourier;
+            }
+        }
+        return null;
+	}
 	
 	/**
 	 * Ends the order, making it unmodifiable

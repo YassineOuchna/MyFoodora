@@ -8,6 +8,7 @@ import java.util.Map;
 
 import core.orders.Order;
 import core.policies.*;
+import core.MyFoodora;
 import core.comparators.*;
 
 public class Manager extends User{
@@ -15,8 +16,8 @@ public class Manager extends User{
 	/*
 	 * The manager is the one who sets the policy (i.e strategy) for the delivery and the profit
 	 */
-	private DeliveryPolicy deliveryPolicy;
-	private TargetProfitPolicy profitPolicy;
+	private static DeliveryPolicy deliveryPolicy;
+	private static TargetProfitPolicy profitPolicy;
 
 	
 
@@ -24,24 +25,10 @@ public class Manager extends User{
 		super(newUsername, password);
 	}
 	
-	public Manager(String newUsername, String password, TargetProfitPolicy targetProfitPolicy) {
-        super(newUsername, password);
-        this.setProfitPolicy(targetProfitPolicy);
-    }
-	
-	public Manager(String newUsername, String password, TargetProfitPolicy targetProfitPolicy, DeliveryPolicy deliveryPolicy) {
-        super(newUsername, password);
-        this.setProfitPolicy(targetProfitPolicy);
-        this.deliveryPolicy=deliveryPolicy;
-    }
-	
-	public DeliveryPolicy getDeliveryPolicy() {
-		return deliveryPolicy;
-	}
-
 	public void setDeliveryPolicy(DeliveryPolicy deliveryPolicy) {
-		this.deliveryPolicy = deliveryPolicy;
+		MyFoodora.setDeliveryPolicy(deliveryPolicy);
 	}
+	
 	public void addUser(User u) {}
 	public void removeUser(User u) {}
 	public void activateUser(User u) {}
@@ -52,14 +39,8 @@ public class Manager extends User{
 	public double averageIncomeByCustomer(Date start, Date end) {return 0;}
 	
 	
-	
-	
-	
-	public TargetProfitPolicy getProfitPolicy() {
-		return profitPolicy;
-	}
 	public void setProfitPolicy(TargetProfitPolicy profitPolicy) {
-		this.profitPolicy = profitPolicy;
+		MyFoodora.setProfitPolicy(profitPolicy);
 	}
 	
 	/*

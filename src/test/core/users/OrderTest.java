@@ -9,65 +9,78 @@ import core.exceptions.ItemNotInOrderException;
 import core.orders.Order;
 import core.users.Restaurant;
 import core.users.Customer;
+import core.users.Courrier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.Date;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class OrderTest {
     private Restaurant restaurant;
     private Order order;
     private Order newOrder;
+    private Customer customer;
 
     @BeforeEach
-    public void setUp() throws Exception{
+    public void setUp() throws Exception {
         restaurant = new Restaurant("restaurantUser", "password");
-		String[] pastaDish = new String[] {"Pasta",
-				"Maindish", 
-				"Standard",
-				"0",
-				"12.0"
-		};
-		
-		String[] newDish = new String[] {"dish",
-				"Maindish", 
-				"Standard",
-				"0",
-				"12.0"
-		};
-		
-		String[] saladDish = new String[] {"Salad",
-				"Starter", 
-				"vegetarian",
-				"0",
-				"8.0"
-		};
+        String[] pastaDish = new String[] {"Pasta",
+                "Maindish",
+                "Standard",
+                "0",
+                "12.0"
+        };
+
+        String[] newDish = new String[] {"dish",
+                "Maindish",
+                "Standard",
+                "0",
+                "12.0"
+        };
+
+        String[] saladDish = new String[] {"Salad",
+                "Starter",
+                "vegetarian",
+                "0",
+                "8.0"
+        };
 
         restaurant.addMenuItem("dish", pastaDish);
         restaurant.addMenuItem("dish", saladDish);
         restaurant.addMenuItem("dish", newDish);
 
-
         // Create a meal
         String[] SaladPastaMeal = new String[] {
-        		"Salad and Pasta Meal",
-        		saladDish[0],
-        		pastaDish[0]
+                "Salad and Pasta Meal",
+                saladDish[0],
+                pastaDish[0]
         };
-        
+
         String[] dishPastaMeal = new String[] {
-        		"Dish and Pasta Meal",
-        		newDish[0],
-        		pastaDish[0]
+                "Dish and Pasta Meal",
+                newDish[0],
+                pastaDish[0]
         };
-        
+
         restaurant.getMenu().addItem("meal", SaladPastaMeal);
         restaurant.getMenu().addItem("meal", dishPastaMeal);
-
-        order = new Order(restaurant, "My Order");
         
-        Customer customer=new Customer("7amid","password");
-        newOrder = new Order(restaurant,"Order1",customer);
+        Customer customer1= new Customer("Yahya", "***");
+        order = new Order(restaurant, "My Order",customer1);
+
+        customer = new Customer("7amid", "password");
+        newOrder = new Order(restaurant, "Order1", customer);
+
+        // Setup available couriers
+        List<Courrier> couriers = new ArrayList<>();
+        couriers.add(new Courrier("Courier1", "password"));
+        couriers.add(new Courrier("Courier2", "password"));
+        //Order.setAvailableCouriers(couriers);
     }
 
     @Test
@@ -142,16 +155,55 @@ class OrderTest {
             e.printStackTrace();
         }
     }
+
     @Test
     public void testOrderFrequency() throws ItemNotInMenuException {
-            MenuItem newDish = restaurant.getMenu().getItem("dish");
-            MenuItem meal = restaurant.getMenu().getItem("Dish and Pasta Meal");
+        MenuItem newDish = restaurant.getMenu().getItem("dish");
+        MenuItem meal = restaurant.getMenu().getItem("Dish and Pasta Meal");
 
-            newOrder.addItem2Order(newDish);
-            newOrder.addItem2Order(newDish);
-            newOrder.addItem2Order(newDish);
-            newOrder.addItem2Order(meal);
-            newOrder.endOrder();
-            assertEquals(3, newDish.orderFrequency);
-            assertEquals(1,meal.orderFrequency);}
+        newOrder.addItem2Order(newDish);
+        newOrder.addItem2Order(newDish);
+        newOrder.addItem2Order(newDish);
+        newOrder.addItem2Order(meal);
+        newOrder.endOrder();
+        assertEquals(3, newDish.orderFrequency);
+        assertEquals(1, meal.orderFrequency);
+    }
+
+    @Test
+    public void testDeliveredOrders() throws ItemNotInMenuException {
+        MenuItem pasta = restaurant.getMenu().getItem("Pasta");
+        order.addItem2Order(pasta);
+        order.endOrder();
+
+        Map<Date, Order> deliveredOrders = Order.getAllDeliveredOrders();
+        assertEquals(3, deliveredOrders.size());
+        assertEquals(order, deliveredOrders.values().iterator().next());
+    }
+
+    @Test
+    public void testEndOrder() throws ItemNotInMenuException, ItemNotInOrderException {
+        MenuItem pasta = restaurant.getMenu().getItem("Pasta");
+        order.addItem2Order(pasta);
+        order.endOrder();
+
+        // Ensure ordering is set to false
+        assertThrows(IllegalStateException.class, () -> {
+            order.addItem2Order(pasta);
+        });
+
+        // Ensure customer paid the correct amount
+        //double totalPrice = pasta.getPrice();
+        //assertEquals(totalPrice, customer.getTotalPaid());
+
+        // Ensure the order is recorded in deliveredOrders
+        assertTrue(Order.getAllDeliveredOrders().containsValue(order));
+    }
+
+    @Test
+    public void testFindDeliverer() {
+        //Courrier courier = order.findDeliverer();
+        //assertNotNull(courier);
+        //assertEquals("Courier1", courier.getUsername());
+    }
 }
