@@ -47,6 +47,15 @@ public class Manager extends User{
 	public double totalIncome(Date start, Date end) {
 		return app.computeTotalIncome(start, end);
 	}
+	
+	
+	/**
+	 * Computes the average income by customer
+	 * in a time period
+	 * @param start :  start of the time period
+	 * @param end : end of the time period 
+	 * @return the average income by customer
+	 */
 	public double averageIncomeByCustomer(Date start, Date end) {
 		// total income
 		double totalIncome = totalIncome(start, end);
@@ -116,6 +125,11 @@ public class Manager extends User{
         Date lastMonth = cal.getTime();
         return getDeliveredOrders(lastMonth,new Date());  
     }
+    
+    /**
+     * Sorts restaurants with the most delivered orders 
+     * @return an ordered ArrayList of restaurants in descending order
+     */
     public ArrayList<Restaurant> showRestaurantTop(){
     	ArrayList<Restaurant> allRestaurants = Restaurant.getAllRestaurants();
         allRestaurants.sort(new RestaurantComparator());

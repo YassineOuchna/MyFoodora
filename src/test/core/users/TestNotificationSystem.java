@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
+import core.MyFoodora;
 import core.exceptions.SubscriberAlreadyExistsException;
 import core.exceptions.SubscriberNotFoundException;
 import core.food.Meal;
@@ -12,9 +12,16 @@ import core.food.Dish;
 import core.users.Customer;
 import core.users.Restaurant;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class TestNotificationSystem {
+	
+	MyFoodora app = MyFoodora.getInstance();
+	
+	@BeforeEach
+	void setUp() {
+	}
 
 	@Test
     void testAddSubscriber() throws SubscriberAlreadyExistsException {
@@ -23,11 +30,11 @@ class TestNotificationSystem {
         //Customer subscriber2 = new Customer("Customer2", "password2");
 
         // Testing adding a subscriber
-        restaurant.addSubscriber(subscriber1);
-        assertTrue(restaurant.getSubscribedCustomers().contains(subscriber1));
+        app.addSubscriber(subscriber1);
+        assertTrue(app.getSubscribedCustomers().contains(subscriber1));
         
         // Test adding a subscriber that already exists
-        assertThrows(SubscriberAlreadyExistsException.class, () -> restaurant.addSubscriber(subscriber1));
+        assertThrows(SubscriberAlreadyExistsException.class, () -> app.addSubscriber(subscriber1));
     }
 	
 	@Test
@@ -37,15 +44,15 @@ class TestNotificationSystem {
         Customer subscriber2 = new Customer("Customer4", "password2");
 
         // Adding subscribers
-        restaurant.addSubscriber(subscriber1);
-        restaurant.addSubscriber(subscriber2);
+        app.addSubscriber(subscriber1);
+        app.addSubscriber(subscriber2);
         
         // Testing removal of a subscriber
-        restaurant.removeSubscriber(subscriber1);
-        assertFalse(restaurant.getSubscribedCustomers().contains(subscriber1));
+        app.removeSubscriber(subscriber1);
+        assertFalse(app.getSubscribedCustomers().contains(subscriber1));
      
         // Test remove a subscriber that doesn't exist
-        assertThrows(SubscriberNotFoundException.class, () -> restaurant.removeSubscriber(subscriber1));
+        assertThrows(SubscriberNotFoundException.class, () -> app.removeSubscriber(subscriber1));
         
     }
 	@Test
@@ -55,8 +62,8 @@ class TestNotificationSystem {
         Customer subscriber2 = new Customer("Customer6", "password2");
 
         // Adding subscribers
-        restaurant.addSubscriber(subscriber1);
-        restaurant.addSubscriber(subscriber2);
+        app.addSubscriber(subscriber1);
+        app.addSubscriber(subscriber2);
 
         // Adding a special Offer
         Meal specialOffer = new Meal("Special Offer", new ArrayList<Dish>());

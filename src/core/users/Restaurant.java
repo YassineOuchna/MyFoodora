@@ -2,20 +2,16 @@ package core.users;
 
 import java.util.ArrayList;
 
-
+import core.MyFoodora;
 import core.exceptions.InvalidItemDescription;
 import core.exceptions.ItemNotInMenuException;
-import core.exceptions.SubscriberAlreadyExistsException;
-import core.exceptions.SubscriberNotFoundException;
 import core.food.*;
 
-public class Restaurant extends User implements SubscriberObservable{
+public class Restaurant extends User {
 	private double[] location;
 	private Menu menu;
 	private double genericDiscount;
 	private double specialDiscount;
-	private ArrayList<SubscriberObserver> subscribedCustomers;
-	private boolean specialOfferAdded=false;
 	
 	/*
 	 * Storing the number of delivered orders from the restaurant
@@ -37,7 +33,6 @@ public class Restaurant extends User implements SubscriberObservable{
 		this.genericDiscount = 0.05;
 		this.specialDiscount= 0.1;
 		ArrayList<SubscriberObserver>list = new ArrayList<SubscriberObserver>();
-		this.subscribedCustomers = list;
 		this.numDeliveredOrders=0;
 		allRestaurants.add(this);
 	}
@@ -53,7 +48,6 @@ public class Restaurant extends User implements SubscriberObservable{
 		this.genericDiscount = 0.05;
 		this.specialDiscount= 0.1;
 		ArrayList<SubscriberObserver>list = new ArrayList<SubscriberObserver>();
-		this.subscribedCustomers = list;
 		this.numDeliveredOrders=0;
 		allRestaurants.add(this);
 	}
@@ -114,48 +108,11 @@ public class Restaurant extends User implements SubscriberObservable{
 	}
 	
 	public void setSpecialOffer(Meal specialOffer) {
+		MyFoodora app = MyFoodora.getInstance();
 		menu.setSpecialOffer(specialOffer);
-		specialOfferAdded=true;
-		this.notifySubscribers();
+		app.notifySubscribers(this.getName(), specialOffer);;
 	}
 
-
-	@Override
-	public void addSubscriber(SubscriberObserver o) throws SubscriberAlreadyExistsException {
-		
-            if (subscribedCustomers.contains(o)) {
-                throw new core.exceptions.SubscriberAlreadyExistsException("Subscriber already exists " + o);}
-            
-            subscribedCustomers.add(o);
-            System.out.println("Subscriber added : " + o);
-      
-	}
-
-
-	@Override
-	public void removeSubscriber(SubscriberObserver o) throws SubscriberNotFoundException {
-            if (!subscribedCustomers.contains(o)) {
-                throw new core.exceptions.SubscriberNotFoundException("Subscriber doesn't exist : " + o);
-            }
-            subscribedCustomers.remove(o);
-            System.out.println("Subscriber removed : " + o);}
-		
-
-
-
-	@Override
-	public void notifySubscribers() {
-		if (this.specialOfferAdded) {
-			for (SubscriberObserver ob: subscribedCustomers)
-				ob.updateSubscriber(this.getSurname(),this.menu.getSpecialOffer());
-			this.specialOfferAdded=false;
-		}
-	}
-
-
-	public ArrayList<SubscriberObserver> getSubscribedCustomers() {
-		return subscribedCustomers;
-	}
 
 	public int getnumDeliveredOrders() {
 		return numDeliveredOrders;

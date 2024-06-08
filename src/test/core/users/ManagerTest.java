@@ -17,7 +17,8 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ManagerTest {
-
+	
+	MyFoodora app = MyFoodora.getInstance();
     private Manager manager;
     private Restaurant restaurant;
     private Customer customer;
@@ -48,7 +49,7 @@ class ManagerTest {
         DeliveryPolicy fastestDelivery = new FastestDelivery();
         manager.setDeliveryPolicy(fastestDelivery);
 
-        Courrier assignedCourier = MyFoodora.getDeliveryPolicy().assignCourrier(courriers, order);
+        Courrier assignedCourier = app.getDeliveryPolicy().assignCourrier(courriers, order);
         assertNotNull(assignedCourier);
         assertEquals("Courier1", assignedCourier.getUsername());
     }
@@ -58,7 +59,7 @@ class ManagerTest {
         DeliveryPolicy fairOccupationDelivery = new FairOcuppationDelivery();
         manager.setDeliveryPolicy(fairOccupationDelivery);
 
-        Courrier assignedCourier = MyFoodora.getDeliveryPolicy().assignCourrier(courriers, order);
+        Courrier assignedCourier = app.getDeliveryPolicy().assignCourrier(courriers, order);
         assertNotNull(assignedCourier);
         assertEquals("Courier3", assignedCourier.getUsername());
     }

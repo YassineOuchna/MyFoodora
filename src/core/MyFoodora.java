@@ -4,15 +4,21 @@ import java.util.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import core.exceptions.SubscriberAlreadyExistsException;
+import core.exceptions.SubscriberNotFoundException;
+import core.food.Meal;
 import core.orders.Order;
 import core.policies.DeliveryPolicy;
 import core.policies.TargetProfitPolicy;
+import core.users.SubscriberObservable;
+import core.users.SubscriberObserver;
 import core.users.User;
 
-public class MyFoodora {
+public class MyFoodora implements SubscriberObservable{
 	
 	// Array of global users of MyFoodoraApp
 	private ArrayList<User> users;
+
 	// HashMap of user IDs and their hashed passwords
 	private HashMap<Integer, Integer> hashedPasswords;
 	
@@ -28,12 +34,17 @@ public class MyFoodora {
 	private double deliveryCost;
 	private double serviceFee;
 	
+	// Notifying customers of new special Offers
+	private ArrayList<SubscriberObserver> subscribedCustomers;
+	
+	// Unique instance of the app
 	private  static MyFoodora myFoodoraInstance;
 
 	private MyFoodora(double markupPercentage, double deliveryCost, double serviceFee) {
 		completedOrders = new ArrayList<Order>();
 		users = new ArrayList<User>();
 		hashedPasswords = new HashMap<Integer, Integer>();
+		this.subscribedCustomers = new ArrayList<SubscriberObserver>();
 		this.markupPercentage = markupPercentage;
 		this.deliveryCost = deliveryCost;
 		this.serviceFee = serviceFee;
@@ -42,6 +53,7 @@ public class MyFoodora {
 	private MyFoodora() {
 		completedOrders = new ArrayList<Order>();
 		users = new ArrayList<User>();
+		this.subscribedCustomers = new ArrayList<SubscriberObserver>();
 		hashedPasswords = new HashMap<Integer, Integer>();
 	}
 	
@@ -139,5 +151,35 @@ public class MyFoodora {
 	}
 	public  void setProfitPolicy(TargetProfitPolicy profitPolicy) {
 		this.profitPolicy = profitPolicy;
+	}
+	
+	public ArrayList<SubscriberObserver> getSubscribedCustomers(){
+		return subscribedCustomers;
+	}
+
+	@Override
+	public void addSubscriber(SubscriberObserver o) throws SubscriberAlreadyExistsException {
+            if (subscribedCustomers.contains(o)) {
+                throw new core.exceptions.SubscriberAlreadyExistsException("Subscriber already exists " + o);}
+            
+            subscribedCustomers.add(o);
+      
+	}
+
+
+	@Override
+	public void removeSubscriber(SubscriberObserver o) throws SubscriberNotFoundException {
+            if (!subscribedCustomers.contains(o)) {
+                throw new core.exceptions.SubscriberNotFoundException("Subscriber doesn't exist : " + o);
+            }
+            subscribedCustomers.remove(o);
+	}
+
+
+	@Override
+	public void notifySubscribers(String restaurantName, Meal specialOffer) {
+		for (SubscriberObserver ob: subscribedCustomers) {
+				ob.updateSubscriber(restaurantName, specialOffer);
+		}
 	}
 }
