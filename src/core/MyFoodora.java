@@ -7,9 +7,14 @@ import java.util.HashMap;
 import core.exceptions.SubscriberAlreadyExistsException;
 import core.exceptions.SubscriberNotFoundException;
 import core.food.Meal;
+import core.orders.Call;
 import core.orders.Order;
 import core.policies.DeliveryPolicy;
+import core.policies.FairOcuppationDelivery;
 import core.policies.TargetProfitPolicy;
+import core.users.Courierr;
+import core.users.Customer;
+import core.users.Restaurant;
 import core.users.SubscriberObservable;
 import core.users.SubscriberObserver;
 import core.users.User;
@@ -44,6 +49,7 @@ public class MyFoodora implements SubscriberObservable{
 		completedOrders = new ArrayList<Order>();
 		users = new ArrayList<User>();
 		hashedPasswords = new HashMap<Integer, Integer>();
+		this.deliveryPolicy = new FairOcuppationDelivery();
 		this.subscribedCustomers = new ArrayList<SubscriberObserver>();
 		this.markupPercentage = markupPercentage;
 		this.deliveryCost = deliveryCost;
@@ -53,6 +59,7 @@ public class MyFoodora implements SubscriberObservable{
 	private MyFoodora() {
 		completedOrders = new ArrayList<Order>();
 		users = new ArrayList<User>();
+		this.deliveryPolicy = new FairOcuppationDelivery();
 		this.subscribedCustomers = new ArrayList<SubscriberObserver>();
 		hashedPasswords = new HashMap<Integer, Integer>();
 	}
@@ -179,7 +186,134 @@ public class MyFoodora implements SubscriberObservable{
 	@Override
 	public void notifySubscribers(String restaurantName, Meal specialOffer) {
 		for (SubscriberObserver ob: subscribedCustomers) {
-				ob.updateSubscriber(restaurantName, specialOffer);
+			ob.updateSubscriber(restaurantName, specialOffer);
 		}
 	}
+	
+	public ArrayList<Customer> getCustomers(){
+		ArrayList<Customer> customers = new ArrayList<Customer>();
+		for (Customer c : customers) {
+			customers.add(c);
+		}
+		return customers;
+	}
+
+	public ArrayList<Restaurant> getRestaurants(){
+		ArrayList<Restaurant> restaurants = new ArrayList<Restaurant>();
+		for (Restaurant c : restaurants) {
+			restaurants.add(c);
+		}
+		return restaurants;
+	}
+
+	public ArrayList<Courierr> getCourriers(){
+		ArrayList<Courierr> courriers = new ArrayList<Courierr>();
+		for (Courierr c : courriers) {
+			courriers.add(c);
+		}
+		return courriers;
+	}
+	
+	/**
+	 * Finds couriers that are on duty 
+	 * and ready to take an order.
+	 * @return a list of available couriers
+	 */
+	public ArrayList<Courierr> getAvailableCourriers() {
+		ArrayList<Courierr> availableCourrier = new ArrayList<Courierr>();
+		for (Courierr c : this.getCourriers()) {
+			if (c.isOnDuty()) {
+				availableCourrier.add(c);
+			}
+		}
+		return availableCourrier;
+	}
+
+	
+	/**
+	 * Finds the courier for the specified order
+	 * according to the delivery policy
+	 * @param order : newly placed order
+	 * @return courier if found, null otherwise 
+	 */
+	public Courierr findDeliverer(Order order){
+		ArrayList<Courierr> availableCourriers = this.getAvailableCourriers();
+        Courierr selectedCourier = deliveryPolicy.assignCourrier(availableCourriers, order);
+
+        if (selectedCourier != null) {
+            Call call = new Call(order);
+            if (selectedCourier.acceptDeliveryCall(call)) {
+                return selectedCourier;
+            }
+        }
+        return null;
+	}
+
+
+	/**
+	 * calculating the courier that delivered the most orders
+	 * @return the most active courier
+	 */
+	public Courierr mostActiveCourier() {
+		Courierr most_courier = this.getCourriers().get(0);
+		int max_orders = most_courier.getDeliveredOrders().size();
+		for(Courierr c: this.getCourriers()){
+			if(c.getDeliveredOrders().size() > max_orders){
+				most_courier = c;
+				max_orders = c.getDeliveredOrders().size();
+			}
+		}
+		return most_courier;
+	}
+	
+	/**
+	 * calculating the courier that delivered the fewest orders
+	 * @return the least active courier
+	 */
+	public Courierr leastActiveCourier() {
+		Courierr least_courier = this.getCourriers().get(0);
+		int min_orders = least_courier.getDeliveredOrders().size();
+		for(Courierr c: this.getCourriers()){
+			if(c.getDeliveredOrders().size() < min_orders){
+				least_courier = c;
+				min_orders = c.getDeliveredOrders().size();
+			}
+		}
+		return least_courier;
+	} 
+	
+	
+	/**
+	 * Computing the most selling restaurant
+	 * @return the restaurant that sold the most orders in total
+	 */
+	public Restaurant mostSellingRestaurant() {
+		Restaurant most_restaurant = this.getRestaurants().get(0);
+		int max_orders =  this.getRestaurants().get(0).getnumDeliveredOrders();
+		for(Restaurant r:this.getRestaurants()){
+			if(r.getnumDeliveredOrders() > max_orders){
+				most_restaurant = r;
+				max_orders = r.getnumDeliveredOrders();
+			}
+		}
+		return most_restaurant;
+	}
+
+	/**
+	 * calculating the least selling restaurant
+	 * @return the restaurant that sold the least orders in total
+	 */
+	public Restaurant leastSellingRestaurant() {
+		Restaurant least_restaurant = this.getRestaurants().get(0);
+		int min_orders =  this.getRestaurants().get(0).getnumDeliveredOrders();
+		for(Restaurant r:this.getRestaurants()){
+			if(r.getnumDeliveredOrders() < min_orders){
+				least_restaurant = r;
+				min_orders = r.getnumDeliveredOrders();
+			}
+		}
+		return least_restaurant;
+	}
+	
+	
 }

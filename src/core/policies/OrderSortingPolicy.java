@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 
 public interface OrderSortingPolicy {
-	public ArrayList<MenuItem> sort(ArrayList<MenuItem> orders);
-	
+	public ArrayList<MenuItem> sort();
 
 }

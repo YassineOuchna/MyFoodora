@@ -1,22 +1,20 @@
 package core.users;
+
 import java.util.ArrayList;
 
 import core.orders.*;
 
-public class Courrier extends User{
+public class Courierr extends User{
 	public int completedDeliveries;
 	private double[] position;
 	private String phoneNumber;
-	private Order[] deliveredOrders;
+	private ArrayList<Order> deliveredOrders;
 	private boolean onDuty;
-	/*
-	 * comment
-	 */
 	
-	public Courrier(String newUsername, String password) {
+	public Courierr(String newUsername, String password) {
 		super(newUsername, password);
 	}
-	public Courrier(String newUsername,String password, double[] position,boolean onDuty,int completedDeliveries) {
+	public Courierr(String newUsername,String password, double[] position,boolean onDuty,int completedDeliveries) {
 		super(newUsername, password);
 		this.position=position;
 		this.onDuty=onDuty;
@@ -41,21 +39,14 @@ public class Courrier extends User{
 		return phoneNumber;
 	}
 
-	public Order[] getDeliveredOrders() {
+	public ArrayList<Order> getDeliveredOrders() {
 		return deliveredOrders;
 	}
 
-
-	
-	
 	public boolean acceptDeliveryCall(Call call) {return true;}
 	
 	public int getCompletedDeliveries() {
 		return completedDeliveries;
 	}
 	
-	public static ArrayList<Courrier> getAvailableCourriers(){return null;}
-
-	
-
 }

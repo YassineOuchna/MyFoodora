@@ -65,7 +65,7 @@ class OrderSortingPolicyTest {
     @Test
     void testItemSort() {
         OrderSortingPolicy policy = new ItemSort();
-        ArrayList<MenuItem> sortedOrders = policy.sort(orders);
+        ArrayList<MenuItem> sortedOrders = policy.sort();
 
         // Check if the orders are sorted by orderFrequency
         assertEquals("Half Meal", sortedOrders.get(0).getName());
@@ -79,7 +79,7 @@ class OrderSortingPolicyTest {
     @Test
     void testHalfMealSort() {
         OrderSortingPolicy policy = new HalfMealSort();
-        ArrayList<MenuItem> sortedOrders = policy.sort(orders);
+        ArrayList<MenuItem> sortedOrders = policy.sort();
 
         // Check if only half meals are present and sorted by orderFrequency
         assertEquals(2, sortedOrders.size());

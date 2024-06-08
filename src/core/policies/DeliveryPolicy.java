@@ -4,6 +4,6 @@ import core.users.*;
 import core.orders.*;
 
 public interface DeliveryPolicy {
-	public Courrier assignCourrier(ArrayList<Courrier> courriers, Order order);
+	public Courierr assignCourrier(ArrayList<Courierr> courriers, Order order);
 
 }

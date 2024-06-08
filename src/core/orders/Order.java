@@ -1,12 +1,10 @@
 package core.orders;
 
 import core.food.*;
-import core.policies.DeliveryPolicy;
 import core.MyFoodora;
 import core.exceptions.ItemNotInMenuException;
 import core.exceptions.ItemNotInOrderException;
 import core.users.Restaurant;
-import core.users.Courrier;
 import core.users.Customer;
 
 import java.util.ArrayList;
@@ -136,25 +134,6 @@ public class Order {
 		return customer;
 	}
 	
-	/**
-	 * Finds and returns a courier for the order delivery
-	 * @return Courier courier
-	 */
-	
-	public Courrier findDeliverer(){
-		MyFoodora app = MyFoodora.getInstance();
-		ArrayList<Courrier> availableCourriers = Courrier.getAvailableCourriers();
-        DeliveryPolicy policy = app.getDeliveryPolicy();
-        Courrier selectedCourier = policy.assignCourrier(availableCourriers, this);
-
-        if (selectedCourier != null) {
-            Call call = new Call(this);
-            if (selectedCourier.acceptDeliveryCall(call)) {
-                return selectedCourier;
-            }
-        }
-        return null;
-	}
 	
 	/**
 	 * Ends the order, making it unmodifiable
@@ -166,6 +145,8 @@ public class Order {
 		for (MenuItem item : orderItems.keySet()) {
 			item.orderFrequency=item.orderFrequency+orderItems.get(item);
 		}
+		MyFoodora app = MyFoodora.getInstance();
+		app.findDeliverer(this);
 		deliveredOrders.add(this);
 		restaurant.addDeliveredOrder();
 	}
