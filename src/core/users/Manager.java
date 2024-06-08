@@ -12,6 +12,7 @@ import core.comparators.*;
 public class Manager extends User{
 	
 	
+	private MyFoodora app = MyFoodora.getInstance();
 
 	public Manager(String newUsername, String password) {
 		super(newUsername, password);
@@ -22,13 +23,12 @@ public class Manager extends User{
 		super.setSurname(surname);
 	}
 	
-	public void setDeliveryPolicy(DeliveryPolicy deliveryPolicy) {
-		MyFoodora.setDeliveryPolicy(deliveryPolicy);
-	}
 	
 	public void addUser(User u) {
+		app.getUsers().add(u);
 	}
 	public void removeUser(User u) {}
+
 	public void activateUser(User u) {}
 	public void desactivateUser(User u) {}
 	public void setServiceFee(double fee) {}
@@ -44,13 +44,21 @@ public class Manager extends User{
 	 * @param targetProfit : target profit policy of the MyFooora app.
 	 */
 	public void meetTargetProfit(double targetProfit) {
-		TargetProfitPolicy profitPolicy = MyFoodora.getProfitPolicy();
+		TargetProfitPolicy profitPolicy = app.getProfitPolicy();
         if (profitPolicy == null) {
             throw new IllegalStateException("No target profit policy set.");
         }
         // computes the parameter and sets it up
         profitPolicy.meetTargetProfit(targetProfit);
     }
+
+	public void setDeliveryPolicy(DeliveryPolicy deliveryPolicy) {
+		app.setDeliveryPolicy(deliveryPolicy);
+	}
+	
+	public void setTargetProfitPolicy(TargetProfitPolicy profitPolicy) {
+		app.setProfitPolicy(profitPolicy);
+	}
 
 
 	/*

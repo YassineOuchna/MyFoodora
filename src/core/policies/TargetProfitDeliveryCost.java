@@ -16,7 +16,8 @@ public class TargetProfitDeliveryCost implements TargetProfitPolicy{
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MONTH, -1);  
         Date lastMonth = cal.getTime();
-		double lastMonthIncome = myFoodora.computeTotalIncome(lastMonth, new Date());
+        // Checking if orders are not null
+        double lastMonthIncome = myFoodora.computeTotalIncome(lastMonth, new Date());
         double deliveryCost = (lastMonthIncome - targetProfit - myFoodora.getServiceFee()) / (1 + myFoodora.getMarkupPercentage());
         
         myFoodora.setDeliveryCost(deliveryCost);

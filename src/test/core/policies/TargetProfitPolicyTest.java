@@ -1,8 +1,10 @@
 package test.core.policies;
 
 import core.policies.TargetProfitPolicy;
+import core.policies.TargetProfitServiceFee;
 import core.MyFoodora;
-import core.policies.ConcreteProfitPolicy;
+import core.policies.TargetProfitDeliveryCost;
+import core.policies.TargetProfitMarkupPercentage;
 import core.users.Manager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,67 +14,69 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class TargetProfitPolicyTest {
+	MyFoodora app = MyFoodora.getInstance();
     Manager manager;
     TargetProfitPolicy policy;
+    double targetProfit;
+    double serviceFee;
+    double markupPercentage;
+    double deliveryCost;
+    double totalIncome;
 
     @BeforeEach
     public void setUp() {
-        policy = new ConcreteProfitPolicy();
         manager = new Manager("admin", "password");
-        manager.setProfitPolicy(policy);
+        
+        // test values
+        targetProfit = 5000;
+        // app has 0 orders for these tests
+        totalIncome = 0;
+        serviceFee = 10;
+        markupPercentage = 0.20;
+        deliveryCost = 5;
     }
 
     @Test
     public void testCalculateDeliveryCost() {
-        double targetProfit = 5000;
-        int totalIncome = 10000;
-        double serviceFee = 10;
-        double markupPercentage = 0.20;
+    	policy = new TargetProfitDeliveryCost();
+        app.setMarkupPercentage(markupPercentage);
+        app.setServiceFee(serviceFee);
 
         double expectedDeliveryCost = (totalIncome - targetProfit - serviceFee) / (1 + markupPercentage);
-        double actualDeliveryCost = manager.computeDeliveryCost(targetProfit, totalIncome, serviceFee, markupPercentage);
+        // computes and sets the corresponding deliveryCost
+        double actualDeliveryCost = policy.meetTargetProfit(targetProfit);
 
         assertEquals(expectedDeliveryCost, actualDeliveryCost, 0.001);
     }
 
     @Test
     public void testCalculateServiceFee() {
-        double targetProfit = 5000;
-        int totalIncome = 10000;
-        double deliveryCost = 5;
-        double markupPercentage = 0.20;
+    	policy = new TargetProfitServiceFee();
+        app.setDeliveryCost(deliveryCost);
+        app.setMarkupPercentage(markupPercentage);
 
         double expectedServiceFee = totalIncome - targetProfit - (markupPercentage * deliveryCost) - deliveryCost;
-        double actualServiceFee = manager.computeServiceFee(targetProfit, totalIncome, deliveryCost, markupPercentage);
-
+        double actualServiceFee= policy.meetTargetProfit(targetProfit);
         assertEquals(expectedServiceFee, actualServiceFee, 0.001);
     }
 
     @Test
     public void testCalculateMarkup() {
-        double targetProfit = 5000;
-        int totalIncome = 10000;
-        double deliveryCost = 5;
-        double serviceFee = 10;
+    	policy = new TargetProfitMarkupPercentage();
+    	app.setDeliveryCost(deliveryCost);
+    	app.setServiceFee(serviceFee);
 
         double expectedMarkup = (totalIncome - targetProfit - serviceFee - deliveryCost) / deliveryCost;
-        double actualMarkup = manager.computeMarkup(targetProfit, totalIncome, deliveryCost, serviceFee);
+        double actualMarkup = policy.meetTargetProfit(targetProfit);
 
         assertEquals(expectedMarkup, actualMarkup, 0.001);
     }
 
     @Test
     public void testCalculateWithoutPolicy() {
-    	MyFoodora.setProfitPolicy(null);
+    	app.setProfitPolicy(null);
 
-        double targetProfit = 5000;
-        int totalIncome = 10000;
-        double serviceFee = 10;
-        double markupPercentage = 0.20;
-        double deliveryCost = 5;
 
-        assertThrows(IllegalStateException.class, () -> manager.computeDeliveryCost(targetProfit, totalIncome, serviceFee, markupPercentage));
-        assertThrows(IllegalStateException.class, () -> manager.computeServiceFee(targetProfit, totalIncome, deliveryCost, markupPercentage));
-        assertThrows(IllegalStateException.class, () -> manager.computeMarkup(targetProfit, totalIncome, deliveryCost, serviceFee));
+        assertThrows(IllegalStateException.class, () -> manager.meetTargetProfit(targetProfit));
     }
 }

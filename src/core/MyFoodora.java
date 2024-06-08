@@ -22,9 +22,10 @@ public class MyFoodora {
 	// Fees and mark-up percentage
 	private double markupPercentage;
 	
-	private static MyFoodora myFoodoraInstance;
+	private  static MyFoodora myFoodoraInstance;
 
 	private MyFoodora() {
+		completedOrders = new ArrayList<Order>();
 	}
 	
 	public static MyFoodora getInstance() {
@@ -100,19 +101,19 @@ public class MyFoodora {
 	
 	
 	
-	private static DeliveryPolicy deliveryPolicy;
-	private static TargetProfitPolicy profitPolicy;
+	private  DeliveryPolicy deliveryPolicy;
+	private  TargetProfitPolicy profitPolicy;
 	
-	public static DeliveryPolicy getDeliveryPolicy() {
+	public  DeliveryPolicy getDeliveryPolicy() {
 		return deliveryPolicy;
 	}
-	public static void setDeliveryPolicy(DeliveryPolicy deliveryPolicy) {
-		MyFoodora.deliveryPolicy = deliveryPolicy;
+	public  void setDeliveryPolicy(DeliveryPolicy deliveryPolicy) {
+		this.deliveryPolicy = deliveryPolicy;
 	}
-	public static TargetProfitPolicy getProfitPolicy() {
+	public  TargetProfitPolicy getProfitPolicy() {
 		return profitPolicy;
 	}
-	public static void setProfitPolicy(TargetProfitPolicy profitPolicy) {
-		MyFoodora.profitPolicy = profitPolicy;
+	public  void setProfitPolicy(TargetProfitPolicy profitPolicy) {
+		this.profitPolicy = profitPolicy;
 	}
 }
