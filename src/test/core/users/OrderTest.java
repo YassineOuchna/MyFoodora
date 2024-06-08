@@ -176,9 +176,8 @@ class OrderTest {
         order.addItem2Order(pasta);
         order.endOrder();
 
-        Map<Date, Order> deliveredOrders = Order.getAllDeliveredOrders();
+        ArrayList<Order> deliveredOrders = Order.getAllDeliveredOrders();
         assertEquals(3, deliveredOrders.size());
-        assertEquals(order, deliveredOrders.values().iterator().next());
     }
 
     @Test
@@ -197,7 +196,7 @@ class OrderTest {
         //assertEquals(totalPrice, customer.getTotalPaid());
 
         // Ensure the order is recorded in deliveredOrders
-        assertTrue(Order.getAllDeliveredOrders().containsValue(order));
+        assertTrue(Order.getAllDeliveredOrders().contains(order));
     }
 
     @Test

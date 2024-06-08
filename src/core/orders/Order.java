@@ -142,8 +142,9 @@ public class Order {
 	 */
 	
 	public Courrier findDeliverer(){
+		MyFoodora app = MyFoodora.getInstance();
 		ArrayList<Courrier> availableCourriers = Courrier.getAvailableCourriers();
-        DeliveryPolicy policy = MyFoodora.getDeliveryPolicy();
+        DeliveryPolicy policy = app.getDeliveryPolicy();
         Courrier selectedCourier = policy.assignCourrier(availableCourriers, this);
 
         if (selectedCourier != null) {
