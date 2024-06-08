@@ -1,4 +1,6 @@
 package core.users;
+import java.util.ArrayList;
+
 import core.orders.*;
 
 public class Courrier extends User{
@@ -48,6 +50,8 @@ public class Courrier extends User{
 	public int getCompletedDeliveries() {
 		return completedDeliveries;
 	}
+	
+	public static ArrayList<Courrier> getAvailableCourriers(){return null;}
 
 	
 

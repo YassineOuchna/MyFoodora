@@ -1,14 +1,18 @@
 package core.orders;
 
 import core.food.*;
-
+import core.policies.DeliveryPolicy;
+import core.MyFoodora;
 import core.exceptions.ItemNotInMenuException;
 import core.exceptions.ItemNotInOrderException;
 import core.users.Restaurant;
 import core.users.Courrier;
 import core.users.Customer;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Order {
@@ -25,7 +29,21 @@ public class Order {
 	 * menu item.
 	 */
     private Map<MenuItem, Integer> orders;
+    /*
+     * An order can be expanded as long as it has not ended yet, 
+     * ordering follows the state of the order 
+     */
     private boolean ordering=true;
+    
+    /*
+     * An order is equipped with a Date
+     */
+    private Date date;
+    
+    /*
+     * We need to store all delivered Orders
+     */
+    private static Map<Date, Order> deliveredOrders = new HashMap<Date,Order>();
 
     
     
@@ -35,6 +53,7 @@ public class Order {
         this.name= name;
         this.orders = new HashMap<>();
         this.ordering=true;
+        this.date= new Date();
     }
 	public Order(Restaurant restaurant,String name, Customer customer) {
         this.restaurant = restaurant;
@@ -42,6 +61,7 @@ public class Order {
         this.orders = new HashMap<>();
         this.ordering=true;
         this.customer=customer;
+        this.date= new Date();
     }
 	
 	/**
@@ -110,13 +130,31 @@ public class Order {
 	public void setName(String name) {
 		this.name = name;
 	}
+	public static Map<Date, Order> getAllDeliveredOrders() {
+        return deliveredOrders;
+    }
+	public Customer getCustomer() {
+		return customer;
+	}
 	
 	/**
 	 * Finds and returns a courier for the order delivery
 	 * @return Courrier courier
 	 */
 	
-	public Courrier findDeliverer() {return null;}
+	public Courrier findDeliverer(){
+		ArrayList<Courrier> availableCourriers = Courrier.getAvailableCourriers();
+        DeliveryPolicy policy = MyFoodora.getDeliveryPolicy();
+        Courrier selectedCourier = policy.assignCourrier(availableCourriers, this);
+
+        if (selectedCourier != null) {
+            Call call = new Call(this);
+            if (selectedCourier.acceptDeliveryCall(call)) {
+                return selectedCourier;
+            }
+        }
+        return null;
+	}
 	
 	/**
 	 * Ends the order, making it unmodifiable
@@ -125,9 +163,15 @@ public class Order {
 		ordering=false;
 		customer.pay(this.getPrice());
 		customer.getFidelityCard().updateCard(this);
+		for (MenuItem item : orders.keySet()) {
+			item.orderFrequency=item.orderFrequency+orders.get(item);
+		}
+		deliveredOrders.put(this.date, this);
+		restaurant.addDeliveredOrder();
+	}
+	public Date getDate() {
+		return date;
 	}
 
-	public Customer getCustomer() {
-		return customer;
-	}
+	
 }

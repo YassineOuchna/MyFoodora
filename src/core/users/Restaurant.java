@@ -2,6 +2,7 @@ package core.users;
 
 import java.util.ArrayList;
 
+
 import core.exceptions.InvalidItemDescription;
 import core.exceptions.ItemNotInMenuException;
 import core.exceptions.SubscriberAlreadyExistsException;
@@ -16,6 +17,14 @@ public class Restaurant extends User implements SubscriberObservable{
 	private ArrayList<SubscriberObserver> subscribedCustomers;
 	private boolean specialOfferAdded=false;
 	
+	/*
+	 * Storing the number of delivered orders from the restaurant
+	 */
+	private int numDeliveredOrders;
+	
+	// Static list to hold all restaurants
+    private static ArrayList<Restaurant> allRestaurants = new ArrayList<>();
+	
 	
 	public Restaurant(String newUsername, String password) {
 		super(newUsername, password);
@@ -29,6 +38,8 @@ public class Restaurant extends User implements SubscriberObservable{
 		this.specialDiscount= 0.1;
 		ArrayList<SubscriberObserver>list = new ArrayList<SubscriberObserver>();
 		this.subscribedCustomers = list;
+		this.numDeliveredOrders=0;
+		allRestaurants.add(this);
 	}
 
 	public Restaurant(String newUsername, String password, double[] location) {
@@ -43,6 +54,8 @@ public class Restaurant extends User implements SubscriberObservable{
 		this.specialDiscount= 0.1;
 		ArrayList<SubscriberObserver>list = new ArrayList<SubscriberObserver>();
 		this.subscribedCustomers = list;
+		this.numDeliveredOrders=0;
+		allRestaurants.add(this);
 	}
 	
 	
@@ -143,4 +156,14 @@ public class Restaurant extends User implements SubscriberObservable{
 	public ArrayList<SubscriberObserver> getSubscribedCustomers() {
 		return subscribedCustomers;
 	}
+
+	public int getnumDeliveredOrders() {
+		return numDeliveredOrders;
+	}
+	public void addDeliveredOrder() {
+		this.numDeliveredOrders++;
+    }
+	public static ArrayList<Restaurant> getAllRestaurants() {
+        return allRestaurants;
+    }
 }
