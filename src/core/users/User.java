@@ -42,12 +42,9 @@ public class User {
 		this.id = nextId;
 		
 		// User is active by default
-		isActive = false;
+		isActive = true;
 	}
 	
-	public void login() {
-		// TODO
-	}
 
 	public int getHashedPassword() {
 		return hashedPassword;
@@ -100,5 +97,20 @@ public class User {
 	public static int getNextId() {
 		return nextId;
 	}
-	public String getUserType() {return null;}
+
+	public String getUserType() {
+		if (this.getClass() == Customer.class) {
+			return "Customer";
+		}
+		if (this.getClass() == Restaurant.class) {
+			return "Restaurant";
+		}
+		if (this.getClass() == Courier.class) {
+			return "Courier";
+		}
+		if (this.getClass() == Manager.class) {
+			return "Manager";
+		}
+		return null;
+	}
 }

@@ -17,7 +17,7 @@ import java.util.ArrayList ;
 import java.util.Calendar;
 import java.util.Date;
 
-public class MyFoodoraClient{
+public class testClient{
 
 
 	private static Scanner sc ;
@@ -1206,4 +1206,3 @@ public class MyFoodoraClient{
 		}
 	}
 }
-

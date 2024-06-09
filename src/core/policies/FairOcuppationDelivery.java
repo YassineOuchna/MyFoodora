@@ -29,7 +29,6 @@ public class FairOcuppationDelivery implements DeliveryPolicy{
         	MyFoodora app = MyFoodora.getInstance();
         	app.addCompletedOrder(order);
         }
-         
     }
 	}
 

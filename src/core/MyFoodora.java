@@ -1,9 +1,6 @@
 package core;
 
 import java.util.Date;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -364,19 +361,5 @@ public class MyFoodora implements SubscriberObservable {
 		return userLastID;
 	}
 
-	public void saveMyFoodora() {
-		try {
-			this.userLastID = User.getNextId();
-
-			FileOutputStream fileOut = new FileOutputStream("myFoodora.ser");
-			ObjectOutputStream out = new ObjectOutputStream(fileOut);
-			out.writeObject(this);
-			out.close();
-			fileOut.close();
-			System.out.print("The MyFoodora platform has been saved.");
-		} catch (IOException exception) {
-			exception.printStackTrace();
-		}
-	}
 	
 }
