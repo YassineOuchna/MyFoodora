@@ -1,5 +1,7 @@
 package core.policies;
 
+import core.exceptions.ProfitUnreachableException;
+
 public interface TargetProfitPolicy {
 	
 	/**
@@ -9,7 +11,8 @@ public interface TargetProfitPolicy {
 	 * @param targetProfit : target profit for this month. 
 	 * @return a double representing either the delivery fee,
 	 * service fee or the markup percentage depending on the policy.
+	 * @throws ProfitUnreachableException 
 	 */
-	public double meetTargetProfit(double targetProfit);
+	public double meetTargetProfit(double targetProfit) throws ProfitUnreachableException;
 	
 }

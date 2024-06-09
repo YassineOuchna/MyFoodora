@@ -27,6 +27,7 @@ class OrderTest {
 
     @BeforeEach
     public void setUp() throws Exception {
+    	MyFoodora app = MyFoodora.getInstance();
         restaurant = new Restaurant("restaurantUser", "password");
         String[] pastaDish = new String[] {"Pasta",
                 "Maindish",
@@ -79,7 +80,6 @@ class OrderTest {
         app.addUser(new Courier("Courier1", "password"));
         app.addUser(new Courier("Courier2", "password"));
 
-        //Order.setAvailableCouriers(couriers);
     }
 
     @Test
@@ -175,7 +175,7 @@ class OrderTest {
         order.addItem2Order(pasta);
         order.endOrder();
 
-        ArrayList<Order> deliveredOrders = Order.getAllDeliveredOrders();
+        ArrayList<Order> deliveredOrders = app.getCompletedOrders();
         assertEquals(3, deliveredOrders.size());
     }
 
@@ -191,6 +191,6 @@ class OrderTest {
         });
 
         // Ensure the order is recorded in deliveredOrders
-        assertTrue(Order.getAllDeliveredOrders().contains(order));
+        assertTrue(app.getCompletedOrders().contains(order));
     }
 }

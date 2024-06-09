@@ -7,16 +7,24 @@ import core.enums.DishCategory;
 import core.enums.FoodType;
 import core.exceptions.InvalidItemDescription;
 import core.exceptions.ItemNotInMenuException;
+import core.users.Restaurant;
 
 public class Menu {
 	
 	private HashMap<String,MenuItem> items;
+	private Restaurant restaurant;
 	
 	
 
 	private Meal specialOffer;
 	
-	public Menu() {
+	/**
+	 * Creates a menu linked to the
+	 * specified restaurant.
+	 * @param restaurant : a restaurant.
+	 */
+	public Menu(Restaurant restaurant) {
+		this.restaurant = restaurant;
 		this.items=new HashMap<String,MenuItem>();
 		this.specialOffer = null;
 	}
@@ -35,7 +43,7 @@ public class Menu {
 	
 	/**
 	 * Adds an item to the 
-	 * restaurant's menu.
+	 * restaurant's menu and applying corresponding discounts
 	 * @param itemType : Type the type of the item
 	 * @param description : an array of strings with necessary information
 	 * to describe the item. 
@@ -72,6 +80,8 @@ public class Menu {
 			}
 			
 			Meal meal = new Meal(name, dishList);
+			// Applying generic discount 
+			meal.setPrice(meal.getPrice()*(1 - restaurant.getGenericDiscount()));
 			items.put(name, meal);
 		} else {
 			throw new InvalidItemDescription("Invalid item type : " + itemType + " Not in menu");

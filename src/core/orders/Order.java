@@ -158,7 +158,6 @@ public class Order {
 		for (MenuItem item : orderItems.keySet()) {
 			item.orderFrequency=item.orderFrequency+orderItems.get(item);
 		}
-
 	}
 	public Date getDate() {
 		return date;

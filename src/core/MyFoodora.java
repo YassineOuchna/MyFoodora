@@ -40,6 +40,9 @@ public class MyFoodora implements SubscriberObservable {
 	private DeliveryPolicy deliveryPolicy;
 	private TargetProfitPolicy profitPolicy;
 
+	// Notifying customers of new special Offers
+	private ArrayList<SubscriberObserver> subscribedCustomers;
+
 	// Fees and mark-up percentage
 	private double markupPercentage;
 	private double deliveryCost;
@@ -248,22 +251,9 @@ public class MyFoodora implements SubscriberObservable {
 		}
 		return courriers;
 	}
+	
+	
 
-	/**
-	 * Finds couriers that are on duty
-	 * and ready to take an order.
-	 * 
-	 * @return a list of available couriers
-	 */
-	public ArrayList<Courier> getAvailableCourriers() {
-		ArrayList<Courier> availableCourrier = new ArrayList<Courier>();
-		for (Courier c : this.getCourriers()) {
-			if (c.isOnDuty()) {
-				availableCourrier.add(c);
-			}
-		}
-		return availableCourrier;
-	}
 
 	/**
 	 * calculating the courier that delivered the most orders
