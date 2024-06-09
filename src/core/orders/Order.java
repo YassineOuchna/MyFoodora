@@ -174,7 +174,6 @@ public class Order {
 
 	public void setCourier(Courier courier) {
 		this.courier = courier;
-		//we put the order on the board of the courier
 	}
 
 	/**

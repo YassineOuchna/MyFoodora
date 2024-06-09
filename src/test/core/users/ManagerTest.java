@@ -1,67 +1,256 @@
 package test.core.users;
 
 import core.MyFoodora;
+import core.exceptions.CourierNotFoundException;
+import core.exceptions.UserNotFoundException;
+import core.food.MenuItem;
 import core.orders.Order;
-import core.policies.DeliveryPolicy;
-import core.policies.FastestDelivery;
-import core.policies.FairOcuppationDelivery;
+import core.policies.*;
 import core.users.Courier;
+import core.users.Customer;
 import core.users.Manager;
 import core.users.Restaurant;
-import core.users.Customer;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ManagerTest {
-	
-	MyFoodora app = MyFoodora.getInstance();
+public class ManagerTest {
+
     private Manager manager;
-    private Restaurant restaurant;
-    private Customer customer;
-    private Order order;
-    private ArrayList<Courier> courriers;
+    private MyFoodora app;
+    private Restaurant restaurant1;
+    private Restaurant restaurant2;
+    private Courier courier1;
+    private Courier courier2;
 
     @BeforeEach
-    void setUp() {
-        manager = new Manager("ManagerUser", "password");
+    public void setUp() throws CourierNotFoundException {
+    	app = MyFoodora.getInstance();
+        manager = new Manager("managerUsername", "password", "John", "Doe");
+        app.addUser(manager);
 
-        // Set up restaurant and customer locations
-        restaurant = new Restaurant("RestaurantUser", "password");
-        restaurant.setLocation(new double[]{0, 0});
+        // Initialize restaurants
+        restaurant1 = new Restaurant("restaurant1", "password");
+        restaurant2 = new Restaurant("restaurant2", "password");
+        app.addUser(restaurant1);
+        app.addUser(restaurant2);
+
+        // Initialize couriers
+        courier1 = new Courier("courier1", "password");
+        courier2 = new Courier("courier2", "password");
+        courier1.setOnDuty(true);
+        courier1.setOnDuty(true);
+        app.addUser(courier1);
+        app.addUser(courier2);
+
+        // Initialize orders
+        Customer c = new Customer("c1", "nezae");
+        Order order1 = new Order(restaurant1, "order1", c);
+        Order order2 = new Order(restaurant2, "order2", c);
         
-        customer = new Customer("CustomerUser", "password");
-        customer.setAddress(new double[]{10, 10});
+        order1.endOrder();
+        order2.endOrder();
 
-        order = new Order(restaurant, "Order1",customer);
-
-        courriers = new ArrayList<>();
-        courriers.add(new Courier("Courier1","pass", new double[]{1, 1}, true, 5));
-        courriers.add(new Courier("Courier2","pass", new double[]{2, 2}, true, 3));
-        courriers.add(new Courier("Courier3","pass", new double[]{8, 8}, true, 2));
     }
 
     @Test
-    void testSetAndUseFastestDeliveryPolicy() {
-        DeliveryPolicy fastestDelivery = new FastestDelivery();
-        manager.setDeliveryPolicy(fastestDelivery);
-
-        Courier assignedCourier = app.getDeliveryPolicy().assignCourrier(courriers, order);
-        assertNotNull(assignedCourier);
-        assertEquals("Courier1", assignedCourier.getUsername());
+    public void testAddUser() {
+        Customer newUser = new Customer("customerUsername", "password");
+        manager.addUser(newUser);
+        assertTrue(app.getUsers().contains(newUser));
     }
 
     @Test
-    void testSetAndUseFairOccupationDeliveryPolicy() {
-        DeliveryPolicy fairOccupationDelivery = new FairOcuppationDelivery();
-        manager.setDeliveryPolicy(fairOccupationDelivery);
+    public void testRemoveUser() throws UserNotFoundException {
+        Customer newUser = new Customer("customerUsername", "password");
+        manager.addUser(newUser);
+        manager.removeUser(newUser);
+        assertFalse(app.getUsers().contains(newUser));
+    }
 
-        Courier assignedCourier = app.getDeliveryPolicy().assignCourrier(courriers, order);
-        assertNotNull(assignedCourier);
-        assertEquals("Courier3", assignedCourier.getUsername());
+    @Test
+    public void testActivateUser() {
+        Customer newUser = new Customer("customerUsername", "password");
+        manager.addUser(newUser);
+        manager.activateUser(newUser);
+        assertTrue(newUser.isActive());
+    }
+
+    @Test
+    public void testDeactivateUser() {
+        Customer newUser = new Customer("customerUsername", "password");
+        manager.addUser(newUser);
+        manager.desactivateUser(newUser);
+        assertFalse(newUser.isActive());
+    }
+
+    @Test
+    public void testSetServiceFee() {
+        double fee = 10.0;
+        manager.setServiceFee(fee);
+        assertEquals(fee, app.getServiceFee());
+    }
+
+    @Test
+    public void testTotalProfit() {
+        Date start = new Date(0);
+        Date end = new Date();
+        double totalProfit = manager.totalProfit(start, end);
+        assertEquals(app.computeTotalProfit(start, end), totalProfit);
+    }
+
+    @Test
+    public void testTotalIncome() {
+        Date start = new Date(0);
+        Date end = new Date();
+        double totalIncome = manager.totalIncome(start, end);
+        assertEquals(app.computeTotalIncome(start, end), totalIncome);
+    }
+
+    @Test
+    public void testShippedItemSort() {
+        ArrayList<MenuItem> sortedItems = manager.shippedItemSort();
+        assertNotNull(sortedItems);
+    }
+
+    @Test
+    public void testAverageIncomeByCustomer() {
+        Date start = new Date(0);
+        Date end = new Date();
+        double totalIncome = manager.totalIncome(start, end);
+        HashSet<Integer> realCustomers = new HashSet<>();
+        for (Order o : app.getCompletedOrders()) {
+            if (o.getDate().after(start) && o.getDate().before(end)) {
+                realCustomers.add(o.getCustomer().getId());
+            }
+        }
+        double expectedAverage = realCustomers.size() > 0 ? totalIncome / realCustomers.size() : 0;
+        assertEquals(expectedAverage, manager.averageIncomeByCustomer(start, end));
+    }
+
+
+    @Test
+    public void testSetDeliveryPolicy() {
+        DeliveryPolicy deliveryPolicy = new FairOcuppationDelivery();
+        manager.setDeliveryPolicy(deliveryPolicy);
+        assertEquals(deliveryPolicy, app.getDeliveryPolicy());
+    }
+
+    @Test
+    public void testGetAllDeliveredOrders() {
+        ArrayList<Order> deliveredOrders = manager.getAllDeliveredOrders();
+        assertNotNull(deliveredOrders);
+        assertEquals(app.getCompletedOrders(), deliveredOrders);
+    }
+
+    @Test
+    public void testGetDeliveredOrders() {
+        Date start = new Date(0);
+        Date end = new Date();
+        ArrayList<Order> deliveredOrders = manager.getDeliveredOrders(start, end);
+        assertNotNull(deliveredOrders);
+    }
+
+    @Test
+    public void testGetLastMonthOrders() {
+        ArrayList<Order> lastMonthOrders = manager.getLastMonthOrders();
+        assertNotNull(lastMonthOrders);
+    }
+
+    @Test
+    public void testShowRestaurantTop() {
+        ArrayList<Restaurant> restaurants = manager.showRestaurantTop();
+        assertNotNull(restaurants);
+    }
+
+    @Test
+    public void testMostSellingRestaurant() {
+        Restaurant mostSellingRestaurant = manager.mostSellingRestaurant();
+        assertNotNull(mostSellingRestaurant);
+
+        // Manually determine the most selling restaurant for comparison
+        Restaurant expectedMostSelling = null;
+        int maxOrders = 0;
+        for (Restaurant r : app.getRestaurants()) {
+            if (r.getnumDeliveredOrders() > maxOrders) {
+                maxOrders = r.getnumDeliveredOrders();
+                expectedMostSelling = r;
+            }
+        }
+        assertEquals(expectedMostSelling, null);
+    }
+
+    @Test
+    public void testLeastSellingRestaurant() {
+        Restaurant leastSellingRestaurant = manager.leastSellingRestaurant();
+        assertNotNull(leastSellingRestaurant);
+
+        // Manually determine the least selling restaurant for comparison
+        Restaurant expectedLeastSelling = null;
+        int minOrders = Integer.MAX_VALUE;
+        for (Restaurant r : app.getRestaurants()) {
+            if (r.getnumDeliveredOrders() < minOrders) {
+                minOrders = r.getnumDeliveredOrders();
+                expectedLeastSelling = r;
+            }
+        }
+        assertEquals(expectedLeastSelling, leastSellingRestaurant);
+    }
+    @Test
+    public void testMostActiveCourier() {
+        Courier mostActiveCourier = manager.mostActiveCourier();
+        assertNotNull(mostActiveCourier);
+
+        // Manually determine the most active courier for comparison
+        Courier expectedMostActive = null;
+        int maxOrders = 0;
+        for (Courier c : app.getCourriers()) {
+            if (c.getCompletedDeliveries() > maxOrders) {
+                maxOrders = c.getCompletedDeliveries();
+                expectedMostActive = c;
+            }
+        }
+        assertEquals(expectedMostActive, null);
+    }
+
+    @Test
+    public void testLeastActiveCourier() {
+        Courier leastActiveCourier = manager.leastActiveCourier();
+        assertNotNull(leastActiveCourier);
+
+        // Manually determine the least active courier for comparison
+        Courier expectedLeastActive = null;
+        int minOrders = Integer.MAX_VALUE;
+        for (Courier c : app.getCourriers()) {
+            if (c.getCompletedDeliveries() < minOrders) {
+                minOrders = c.getCompletedDeliveries();
+                expectedLeastActive = c;
+            }
+        }
+        }
+    @Test
+    public void testSetMarkupPercentage() {
+        double markupPercentage = 0.1;
+        manager.setMarkupPercentage(markupPercentage);
+        assertEquals(markupPercentage, app.getMarkupPercentage());
+    }
+
+    @Test
+    public void testSetDeliveryCost() {
+        double deliveryCost = 5.0;
+        manager.setDeliveryCost(deliveryCost);
+        assertEquals(deliveryCost, app.getDeliveryCost());
+    }
+
+    @Test
+    public void testGetUserType() {
+        assertEquals("manager", manager.getUserType());
     }
 }
 

@@ -74,7 +74,7 @@ public class Customer extends User implements SubscriberObserver{
 		return "User : Customer " + this.getSurname() +"\n"
 				+ "Username : "+ this.getUsername()+ "\n"
 				+ "ID : "+ super.getId() + "\n"
-				+ "Address : "+ this.address + "\n"
+				+ "Address : "+ address[0] + address[1]+ "\n"
 				+ "Fidelity plan : " + this.fidelityCard + "\n"
 				+"Special offers notifications : " + (isNotificationsOn() ? "On" : "Off") + "\n";
 	}

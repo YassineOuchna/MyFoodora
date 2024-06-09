@@ -57,6 +57,20 @@ public class Restaurant extends User {
 		this.orderSortingPolicy = new ItemSort();
 	}
 	
+	@Override
+	public String toString() {
+	    StringBuilder sb = new StringBuilder();
+	    sb.append("Restaurant Details:\n");
+	    sb.append("Username: ").append(this.getName()).append("\n");
+	    sb.append("Location: [").append(this.location[0]).append(", ").append(this.location[1]).append("]\n");
+	    sb.append("Generic Discount: ").append(this.genericDiscount).append("\n");
+	    sb.append("Special Discount: ").append(this.specialDiscount).append("\n");
+	    sb.append("Number of Delivered Orders: ").append(this.numDeliveredOrders).append("\n");
+	    sb.append("Order Sorting Policy: ").append(this.orderSortingPolicy.getClass().getSimpleName()).append("\n");
+	    sb.append("Menu:\n");
+	    sb.append(this.menu.getItems()).append("\n"); // Assuming `getItems()` returns a readable format of menu items
+	    return sb.toString();
+	}
 	
 	/**
 	 * Sorts all the ordered menu items according

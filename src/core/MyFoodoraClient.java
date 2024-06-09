@@ -27,6 +27,17 @@ public class MyFoodoraClient{
 	private static User currentUser ;
 	private static Order currentOrder = null ;
 
+	/**
+	 * Checks the count in the arguments 
+	 * stored in the string tokenizer.  
+	 * @param st
+	 * @param expectedCount
+	 * @return
+	 */
+	private static boolean checkArgumentsCount(StringTokenizer st, int expectedCount) {
+	    return st.countTokens() == expectedCount;
+	}
+
 	public static void main(String[] args) throws ItemNotInMenuException {
 		myFoodora = MyFoodora.getInstance();
 
@@ -39,8 +50,7 @@ public class MyFoodoraClient{
 		String commande = "" ;
 		closeLoop :
 			while (!commande.equals("close")){	
-				System.out.println("Please use \"login <username> <password>\"\n"
-						+ "Type \"help <>\" to have a list of all available commands");
+				System.out.println("Type \"help <>\" to have a list of all available commands \n");
 				input = sc.nextLine();
 				st = new StringTokenizer(input) ;
 				try{
@@ -51,29 +61,24 @@ public class MyFoodoraClient{
 				boolean error = false ;
 				switch (commande){
 				case("registerManager"):
+					if (!checkArgumentsCount(st,3)) {
+						System.out.println("Not enough arguments!****");
+						System.err.println("The command "+ commande +" <name> <username> <password> has only 3 parameters.");
+						break;
+					}
 					String managerName = st.nextToken();
 					String managerUserName = st.nextToken();
 					String managerPassword = st.nextToken();
-					String managerXString = st.nextToken(" ,");
-					double managerX = 0;
-					String managerYString = st.nextToken(",");
-					double managerY = 0;
-					try{
-						managerX = Double.parseDouble(managerXString) ;
-						managerY = Double.parseDouble(managerYString) ;
-					}catch(NumberFormatException e){
-						System.err.println("The address parameter is invalid you must enter two coordinates (ex : \"1.25,1.45\").");
-						error = true ;
-					}
 					if(st.hasMoreTokens()){	
-						System.err.println("The command \"registerManager <username> <password> <address>\" has only 3 parameters.");
+						System.err.println("The command "+ commande +" <name> <username> <password> has only 3 parameters.");
 						error = true ;
 					}
 					if(!error){
 						Manager newManager = new Manager(managerUserName, managerPassword);
+						newManager.setName(managerName);
                         myFoodora.addUser(newManager);
 						try{
-							Manager manager = (Manager) MyFoodora.getInstance().findUserByName(managerName);
+							Manager manager = (Manager) myFoodora.findUserByName(managerName);
 							System.out.println("You have been registered. Here is your accounts informations : ") ;
 							System.out.println(myFoodora.findUserByName(managerName));
 						}catch(UserNotFoundException e){
@@ -82,6 +87,11 @@ public class MyFoodoraClient{
 					}
 					break ;
 				case("registerCourier"):
+					if (!checkArgumentsCount(st,4)) {
+						System.out.println("Not enough arguments!");
+						System.err.println("The command "+ commande +" <name> <username> <password> <address> has only 4 parameters.");
+						break;
+					}
 					String courierName = st.nextToken();
 					String courierUserName = st.nextToken();
 					String courierPassword = st.nextToken();
@@ -97,12 +107,13 @@ public class MyFoodoraClient{
 						error = true ;
 					}
 					if(st.hasMoreTokens()){	
-						System.err.println("The command \"registerCourier <username> <password> <address>\" has only 3 parameters.");
+						System.err.println("The command \"registerCourier <username> <password> <address>\" has only 4 parameters.");
 						error = true ;
 					}
 					if(!error){
 						Courier newCourier = new Courier(courierUserName, courierPassword);
                         newCourier.setPosition(new double[]{courierX, courierY});
+                        newCourier.setName(courierName);
                         myFoodora.addUser(newCourier);
 						try{
 							Courier courier = (Courier) MyFoodora.getInstance().findUserByName(courierName);
@@ -114,6 +125,11 @@ public class MyFoodoraClient{
 					}
 					break ;
 				case("registerRestaurant"):
+					if (!checkArgumentsCount(st,4)) {
+						System.out.println("Not enough arguments!");
+						System.err.println("The command "+ commande +" <name> <username> <password> <address> has only 4 parameters.");
+						break;
+					} 
 					String restaurantName = st.nextToken();
 					String restaurantUserName = st.nextToken();
 					String restaurantPassword = st.nextToken();
@@ -129,12 +145,13 @@ public class MyFoodoraClient{
 						error = true ;
 					}
 					if(st.hasMoreTokens()){	
-						System.err.println("The command \"registerRestaurant <username> <password> <address>\" has only 3 parameters.");
+						System.err.println("The command \"registerRestaurant <name> <username> <password> <address>\" has only 3 parameters.");
 						error = true ;
 					}
 					if(!error){
 						Restaurant newRestaurant = new Restaurant(restaurantUserName, restaurantPassword);
                         newRestaurant.setLocation(new double[]{restaurantX, restaurantY});
+                        newRestaurant.setName(restaurantName);
                         myFoodora.addUser(newRestaurant);
 						try{
 							Restaurant restaurant = (Restaurant) MyFoodora.getInstance().findUserByName(restaurantName);
@@ -146,10 +163,17 @@ public class MyFoodoraClient{
 					}
 					break ;
 				case("registerCustomer"):
+					if (!checkArgumentsCount(st,7)) {
+						System.out.println("Not enough arguments!");
+						System.err.println("The command \"registerCustomer <firstName> <lastName> <username> <password> <email> <phone> <address> \" has only 7 parameters.");
+						break;
+					}
 					String customerName = st.nextToken();
 					String customerSurname = st.nextToken();
 					String customerUserName = st.nextToken();
 					String customerPassword = st.nextToken();
+					String customerEmail= st.nextToken();
+					String customerPhone = st.nextToken();
 					String customerXString = st.nextToken(" ,");
 					double customerX = 0;
 					String customerYString = st.nextToken(",");
@@ -162,12 +186,14 @@ public class MyFoodoraClient{
 						error = true ;
 					}
 					if(st.hasMoreTokens()){	
-						System.err.println("The command \"register <firstName> <lastName> <username> <password> <address>\" has only 5 parameters.");
+						System.err.println("The command \"registerCustomer <firstName> <lastName> <username> <password> <email> <phone> <address> \" has only 7 parameters.");
 						error = true ;
 					}
 					if(!error){
 						Customer newCustomer = new Customer(customerUserName, customerPassword, customerName, customerSurname);
                         newCustomer.setAddress(new double[]{customerX, customerY});
+                        newCustomer.setEmail(customerEmail);
+                        newCustomer.setPhoneNumber(customerPhone);
                         myFoodora.addUser(newCustomer);
 						try{
 							((Customer)myFoodora.findUserByName(customerName)).setAddress(new double [] {customerX,customerY});
@@ -176,6 +202,23 @@ public class MyFoodoraClient{
 						}catch(UserNotFoundException e){
 							System.out.println("Error while creating the user.");
 						}
+						System.out.println("Would you like to be notified of special Offers ? y/n");
+						for (int i =0; i<3; i++) {
+							input = sc.nextLine();
+							st = new StringTokenizer(input) ;
+							String answer= "";
+							try{
+							answer = st.nextToken() ;
+							}catch(NoSuchElementException e){
+								System.out.println("Asnwer with either y or n");
+							}
+							if (answer == "y") {
+								newCustomer.setNotificationsOn(true);
+								break;
+							}
+								
+						}
+
 					}
 					break ;
 				case("login"):
@@ -192,11 +235,12 @@ public class MyFoodoraClient{
 					}
 					break;
 				case ("runTest"):
-					st = new StringTokenizer(input) ;
+					st = new StringTokenizer(input);
+				    st.nextToken();
 					String fileName = "" ;
 					try{
 						fileName = st.nextToken() ;
-						File testScenarioFile = new File(fileName+".txt");
+						File testScenarioFile = new File(fileName);
 						//to read the testScenario file
 						sc = new Scanner (testScenarioFile);
 						//to write the testScenario file
@@ -209,10 +253,15 @@ public class MyFoodoraClient{
 					}
 					break;					
 				case("help"):
+					if (!checkArgumentsCount(st,0)) {
+						System.out.println("Not enough arguments!");
+						System.err.println("Invalid number of arguments or syntax error.");
+						
+					} else {
 					System.out.println("\"register <firstName> <lastName> <username> <password> <address>\" : register as customer into the system\n"
 							+ "\"login <username> <password>\" : log into the system\n"
 							+ "\"runTest <testScenarioFile>\" : execute the list of CLUI commands contained in the testScenario file passed as argument\n"
-							+ "\"close<>\" : close MyFoodora");
+							+ "\"close<>\" : close MyFoodora");}
 					break ;
 				case("close"):
 					break closeLoop ;
@@ -547,105 +596,166 @@ public class MyFoodoraClient{
 						+ "\"logout\" : log out"
 						);
 				break;
-			case("registerRestaurant"):
-				String restaurantName = st.nextToken();
-				String restaurantUserName = st.nextToken();
-				String restaurantPassword = st.nextToken();
-				String restaurantXString = st.nextToken("\",");
-				double restaurantX = 0;
-				String restaurantYString = st.nextToken(",\"");
-				double restaurantY = 0;
-				try{
-					restaurantX = Double.parseDouble(restaurantXString) ;
-					restaurantY = Double.parseDouble(restaurantYString) ;
-				}catch(NumberFormatException e){
-					System.err.println("The address parameter is invalid you must enter two coordinates (ex : \"1.25,1.45\").");
-					error = true ;
-				}
-				if(st.hasMoreTokens()){	
-					System.err.println("The command \"registerRestaurant <name> <username> <password> <address>\" has only 4 parameters.");
-					error = true ;
-				}
-				if(!error){
-					Restaurant r=new Restaurant(restaurantUserName,restaurantPassword);
-					r.setName(restaurantName);
-					
-					
-					currentManager.addUser(r);
-					try{
-						((Restaurant)currentManager.getMyFoodora().findUserByName(restaurantName)).setLocation(new double [] {restaurantX,restaurantY});
-						System.out.println("The restaurant has been registered. Here are its properties : ") ;
-						System.out.println(currentManager.getMyFoodora().findUserByName(restaurantName));
-					}catch(UserNotFoundException e){
-						System.out.println("Error while creating the user.");
+				case("registerManager"):
+					if (!checkArgumentsCount(st,3)) {
+						System.out.println("Not enough arguments!****");
+						System.err.println("The command "+ commande +" <name> <username> <password> has only 3 parameters.");
+						break;
 					}
-				}
+					String managerName = st.nextToken();
+					String managerUserName = st.nextToken();
+					String managerPassword = st.nextToken();
+					if(st.hasMoreTokens()){	
+						System.err.println("The command "+ commande +" <name> <username> <password> has only 3 parameters.");
+						error = true ;
+					}
+					if(!error){
+						Manager newManager = new Manager(managerUserName, managerPassword);
+						newManager.setName(managerName);
+                        myFoodora.addUser(newManager);
+						try{
+							Manager manager = (Manager) myFoodora.findUserByName(managerName);
+							System.out.println("You have been registered. Here is your accounts informations : ") ;
+							System.out.println(myFoodora.findUserByName(managerName));
+						}catch(UserNotFoundException e){
+							System.out.println("Error while creating the " + managerName);
+						}
+					}
+					return "next";
+				case("registerCourier"):
+					if (!checkArgumentsCount(st,4)) {
+						System.out.println("Not enough arguments!");
+						System.err.println("The command "+ commande +" <name> <username> <password> <address> has only 3 parameters.");
+						break;
+					}
+					String courierName = st.nextToken();
+					String courierUserName = st.nextToken();
+					String courierPassword = st.nextToken();
+					String courierXString = st.nextToken(" ,");
+					double courierX = 0;
+					String courierYString = st.nextToken(",");
+					double courierY = 0;
+					try{
+						courierX = Double.parseDouble(courierXString) ;
+						courierY = Double.parseDouble(courierYString) ;
+					}catch(NumberFormatException e){
+						System.err.println("The address parameter is invalid you must enter two coordinates (ex : \"1.25,1.45\").");
+						error = true ;
+					}
+					if(st.hasMoreTokens()){	
+						System.err.println("The command \"registerCourier <username> <password> <address>\" has only 3 parameters.");
+						error = true ;
+					}
+					if(!error){
+						Courier newCourier = new Courier(courierUserName, courierPassword);
+                        newCourier.setPosition(new double[]{courierX, courierY});
+                        newCourier.setName(courierName);
+                        myFoodora.addUser(newCourier);
+						try{
+							Courier courier = (Courier) MyFoodora.getInstance().findUserByName(courierName);
+							System.out.println("You have been registered. Here is your accounts informations : ") ;
+							System.out.println(myFoodora.findUserByName(courierName));
+						}catch(UserNotFoundException e){
+							System.out.println("Error while creating the " + courierName);
+						}
+					}
+					return "next";
+				case("registerRestaurant"):
+					if (!checkArgumentsCount(st,3)) {
+						System.out.println("Not enough arguments!");
+						System.err.println("The command "+ commande +" <name> <username> <password> <address> has only 3 parameters.");
+						break;
+					} 
+					String restaurantName = st.nextToken();
+					String restaurantUserName = st.nextToken();
+					String restaurantPassword = st.nextToken();
+					String restaurantXString = st.nextToken();
+					double restaurantX = 0;
+					String restaurantYString = st.nextToken();
+					double restaurantY = 0;
+					try{
+						restaurantX = Double.parseDouble(restaurantXString) ;
+						restaurantY = Double.parseDouble(restaurantYString) ;
+					}catch(NumberFormatException e){
+						System.err.println("The address parameter is invalid you must enter two coordinates (ex : \"1.25,1.45\").");
+						error = true ;
+					}
+					if(st.hasMoreTokens()){	
+						System.err.println("The command \"registerRestaurant <name> <username> <password> <address>\" has only 3 parameters.");
+						error = true ;
+					}
+					if(!error){
+						Restaurant newRestaurant = new Restaurant(restaurantUserName, restaurantPassword);
+                        newRestaurant.setLocation(new double[]{restaurantX, restaurantY});
+                        newRestaurant.setName(restaurantName);
+                        myFoodora.addUser(newRestaurant);
+						try{
+							Restaurant restaurant = (Restaurant) MyFoodora.getInstance().findUserByName(restaurantName);
+							System.out.println("You have been registered. Here is your accounts informations : ") ;
+							System.out.println(myFoodora.findUserByName(restaurantName));
+						}catch(UserNotFoundException e){
+							System.out.println("Error while creating the " + restaurantName);
+						}
+					}
 				return "next" ;
-			case("registerCustomer"):
-				String customerName = st.nextToken();
-				String customerSurname = st.nextToken();
-				String customerUserName = st.nextToken();
-				String customerPassword = st.nextToken();
-				String customerXString = st.nextToken("\",");
-				double customerX = 0;
-				String customerYString = st.nextToken(",\"");
-				double customerY = 0;
-				try{
-					customerX = Double.parseDouble(customerXString) ;
-					customerY = Double.parseDouble(customerYString) ;
-				}catch(NumberFormatException e){
-					System.err.println("The address parameter is invalid you must enter two coordinates (ex : \"1.25,1.45\").");
-					error = true ;
-				}
-				if(st.hasMoreTokens()){	
-					System.err.println("The command \"registerCustomer <firstName> <lastName> <username> <password> <address>\" has only 5 parameters.");
-					error = true ;
-				}
-				if(!error){
-					Customer c=new Customer(customerUserName,customerPassword);
-					c.setSurname(customerSurname);
-					
-					currentManager.addUser(c);
-					try{
-						((Customer)currentManager.getMyFoodora().findUserByName(customerName)).setAddress(new double [] {customerX,customerY});
-						System.out.println("The customer has been registered. Here are its properties : ") ;
-						System.out.println(currentManager.getMyFoodora().findUserByName(customerName));
-					}catch(UserNotFoundException e){
-						System.out.println("Error while creating the user.");
+				case("registerCustomer"):
+					if (!checkArgumentsCount(st,7)) {
+						System.out.println("Not enough arguments!");
+						System.err.println("The command \"registerCustomer <firstName> <lastName> <username> <password> <address> <email> <phone>\" has only 7 parameters.");
+						break;
 					}
-				}
-				return "next" ;
-			case("registerCourier"):
-				String courierName = st.nextToken();
-				String courierUserName = st.nextToken();
-				String courierPassword = st.nextToken();
-				String courierXString = st.nextToken("\",");
-				double courierX = 0;
-				String courierYString = st.nextToken(",\"");
-				double courierY = 0;
-				try{
-					courierX = Double.parseDouble(courierXString) ;
-					courierY = Double.parseDouble(courierYString) ;
-				}catch(NumberFormatException e){
-					System.err.println("The address parameter is invalid you must enter two coordinates (ex : \"1.25,1.45\").");
-					error = true ;
-				}
-				if(st.hasMoreTokens()){	
-					System.err.println("The command \"registerCourier <firstName> <lastName> <username> <password> <address>\" has only 5 parameters.");
-					error = true ;
-				}
-				if(!error){
-					Courier c= new Courier(courierUserName,courierPassword);
-					c.setName(courierName);
-					currentManager.addUser(c);
+					String customerName = st.nextToken();
+					String customerSurname = st.nextToken();
+					String customerUserName = st.nextToken();
+					String customerPassword = st.nextToken();
+					String customerXString = st.nextToken(" ,");
+					double customerX = 0;
+					String customerYString = st.nextToken(",");
+					double customerY = 0;
+					String customerEmail= st.nextToken();
+					String customerPhone = st.nextToken();
 					try{
-						((Courier)currentManager.getMyFoodora().findUserByName(courierName)).setPosition(new double []{courierX,courierY});
-						System.out.println("The courier has been registered. Here are its properties : ") ;
-						System.out.println(currentManager.getMyFoodora().findUserByName(courierName));
-					}catch(UserNotFoundException e){
-						System.out.println("Error while creating the user.");
+						customerX = Double.parseDouble(customerXString) ;
+						customerY = Double.parseDouble(customerYString) ;
+					}catch(NumberFormatException e){
+						System.err.println("The address parameter is invalid you must enter two coordinates (ex : \"1.25,1.45\").");
+						error = true ;
 					}
-				}
+					if(st.hasMoreTokens()){	
+						System.err.println("The command \"registerCustomer <firstName> <lastName> <username> <password> <address> <email> <phone>\" has only 7 parameters.");
+						error = true ;
+					}
+					if(!error){
+						Customer newCustomer = new Customer(customerUserName, customerPassword, customerName, customerSurname);
+                        newCustomer.setAddress(new double[]{customerX, customerY});
+                        newCustomer.setEmail(customerEmail);
+                        newCustomer.setPhoneNumber(customerPhone);
+                        myFoodora.addUser(newCustomer);
+						try{
+							((Customer)myFoodora.findUserByName(customerName)).setAddress(new double [] {customerX,customerY});
+							System.out.println("You have been registered. Here is your accounts informations : ") ;
+							System.out.println(myFoodora.findUserByName(customerName));
+						}catch(UserNotFoundException e){
+							System.out.println("Error while creating the user.");
+						}
+						System.out.println("Would you like to be notified of special Offers ? y/n");
+						for (int i =0; i<3; i++) {
+							input = sc.nextLine();
+							st = new StringTokenizer(input) ;
+							String answer= "";
+							try{
+							answer = st.nextToken() ;
+							}catch(NoSuchElementException e){
+								System.out.println("Asnwer with either y or n");
+							}
+							if (answer == "y") {
+								newCustomer.setNotificationsOn(true);
+								break;
+							}
+								
+						}
+
+					}
 				return "next" ;
 			case("setDeliveryPolicy"):
 				String delPolicyName = st.nextToken();

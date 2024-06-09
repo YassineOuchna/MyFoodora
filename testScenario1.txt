@@ -1,12 +1,14 @@
-regiterManager managername manager1 manager1
+registerManager managername manager1 manager1
 registerRestaurant restaurant_name restaurant1 restaurant1 12,15
-regiterCustomer customerName customerLastName customer1 customer1 2,6 taboun@gmail.fr 0661674121
+registerCustomer customerName customerLastName customer1 customer1 taboun@gmail.fr 0661674121 2,6
 y
 registerCourier courierName courier1 courier1 1,3
 login customer1 customer1
 logout
 login manager1 manager1
 showCustomers
+logout
+close
 
 
  

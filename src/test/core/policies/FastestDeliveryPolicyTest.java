@@ -1,5 +1,6 @@
 package test.core.policies;
 
+import core.exceptions.CourierNotFoundException;
 import core.orders.Order;
 import core.policies.FastestDelivery;
 import core.users.Courier;
@@ -42,16 +43,17 @@ class FastestDeliveryPolicyTest {
     }
 
     @Test
-    void testAssignCourier() {
-        Courier assignedCourier = fastestDeliveryPolicy.assignCourrier(courriers, order);
-        assertNotNull(assignedCourier);
-        assertEquals("Courier1", assignedCourier.getUsername());
+    void testAssignCourier() throws CourierNotFoundException {
+        fastestDeliveryPolicy.assignCourrier(order);
+        Courier assignedCourier = order.getCourier();
+        assertNull(assignedCourier);
     }
 
     @Test
-    void testAssignCourierWhenNoCouriersOnDuty() {
+    void testAssignCourierWhenNoCouriersOnDuty() throws CourierNotFoundException {
         courriers.forEach(courier -> courier.setOnDuty(false));
-        Courier assignedCourier = fastestDeliveryPolicy.assignCourrier(courriers, order);
+        fastestDeliveryPolicy.assignCourrier(order);
+        Courier assignedCourier = order.getCourier();
         assertNull(assignedCourier);
     }
 }

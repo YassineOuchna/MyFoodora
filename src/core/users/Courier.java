@@ -1,6 +1,7 @@
 package core.users;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import core.orders.*;
 
@@ -26,7 +27,13 @@ public class Courier extends User{
 		this.completedDeliveries=completedDeliveries;
 	}
 	
+	
 
+	@Override
+	public String toString() {
+		return "Courier [completedDeliveries=" + completedDeliveries + ", position=" + position[0] + "," + position[1] 
+				+ ", phoneNumber=" + phoneNumber + ", deliveredOrders=" + deliveredOrders + ", onDuty=" + onDuty + "]";
+	}
 	public double[] getPosition() {
 		return position;
 	}

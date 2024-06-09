@@ -176,6 +176,12 @@ public class Manager extends User{
 		return app.leastSellingRestaurant();
 	}
 	
+	@Override
+	public String toString() {
+		return "User : Manager " + this.getName() +"\n"
+				+ "Username : "+ this.getUsername()+ "\n"
+				+ "ID : "+ super.getId() + "\n";
+	}
 	/**
 	 * determining the courier that delivered the most orders
 	 * @return the most active courier
