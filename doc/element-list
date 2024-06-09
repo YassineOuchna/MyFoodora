@@ -1,0 +1,9 @@
+core
+core.comparators
+core.enums
+core.exceptions
+core.fidelityCards
+core.food
+core.orders
+core.policies
+core.users
