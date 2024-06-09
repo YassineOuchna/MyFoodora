@@ -48,8 +48,6 @@ public class MyFoodora implements SubscriberObservable {
 	private double deliveryCost;
 	private double serviceFee;
 
-	// Notifying customers of new special Offers
-	private ArrayList<SubscriberObserver> subscribedCustomers;
 
 	// Unique instance of the app
 	private static MyFoodora myFoodoraInstance;
@@ -169,6 +167,15 @@ public class MyFoodora implements SubscriberObservable {
 			}
 		}
 		throw (new UserNotFoundException("User of name \"" + name + "\" not in the system"));
+	}
+	
+	public User findUserByUserName(String username) throws UserNotFoundException {
+		for (User user : this.users) {
+			if (user.getUsername().equals(username)) {
+				return (user);
+			}
+		}
+		throw (new UserNotFoundException("User of name \"" + username + "\" not in the system"));
 	}
 
 	public HashMap<Integer, Integer> getHashedPasswords() {
