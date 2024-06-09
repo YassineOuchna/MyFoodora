@@ -211,5 +211,8 @@ public class Manager extends User{
 	public void setOrderSortingPolicy(OrderSortingPolicy orderSortingPolicy) {
 		this.orderSortingPolicy = orderSortingPolicy;
 	}
+	
+	@Override
+	public String getUserType() {return "manager";}
     
 }

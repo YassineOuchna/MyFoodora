@@ -1,13 +1,14 @@
 package core.users;
 import java.util.ArrayList;
 
+import core.MyFoodora;
 import core.fidelityCards.BasicFidelityCard;
 import core.fidelityCards.FidelityCard;
+import core.orders.Order;
 
 
 
 public class Customer extends User implements SubscriberObserver{
-	private String phoneNumber;
 	
 	// Customer's address is stored as two real values
 	private double[] address;
@@ -33,10 +34,7 @@ public class Customer extends User implements SubscriberObserver{
 	 * A customer 
 	 */
 	private ArrayList<String> receivedEmails;
-	
-	
-	private String email;
-	
+		
 	
 	public Customer(String newUsername, String password, String name, String surname) {
 		super(newUsername, password);
@@ -53,6 +51,7 @@ public class Customer extends User implements SubscriberObserver{
 		// By default, basic fidelity plan 
 		fidelityCard = new BasicFidelityCard();
 	}
+	
 
 	public Customer(String newUsername, String password) {
 		super(newUsername, password);
@@ -76,16 +75,6 @@ public class Customer extends User implements SubscriberObserver{
 				+ "Address : "+ this.address + "\n"
 				+ "Fidelity plan : " + this.fidelityCard + "\n"
 				+"Special offers notifications : " + (isNotificationsOn() ? "On" : "Off") + "\n";
-	}
-
-
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
-
-
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
 	}
 
 
@@ -141,18 +130,39 @@ public class Customer extends User implements SubscriberObserver{
 		return receivedEmails;
 	}
 
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
+	
 	
 	public void pay(double price) {}
 
 	public FidelityCard getFidelityCard() {
 		return fidelityCard;
+	}
+	@Override
+	public String getUserType() {return "customer";}
+	
+	/**
+	 * displays the informations of the user's fidelity card plan
+	 */
+	public void displayFidelityInfo(){
+		System.out.println(this.fidelityCard.toString());
+	}
+	
+	/**
+	 * gets the history of all the orders the customer made on MyFoodora
+	 * @param myFoodora : the MyFoodora core
+	 * @return historyOfOrders : all the orders the customer made on MyFoodora
+	 */
+	public ArrayList<Order> getHistoryOfOrders (MyFoodora myFoodora){
+		ArrayList<Order> historyOfOrders = new ArrayList<Order>();
+		
+		ArrayList<Order> completedOrders = myFoodora.getCompletedOrders();
+		for(Order order : completedOrders){
+			//we seek the completed orders made by the customer
+			if (order.getCustomer().getId() == this.getId()){
+				historyOfOrders.add(order);
+			}
+		}
+		return historyOfOrders;
 	}
 
 

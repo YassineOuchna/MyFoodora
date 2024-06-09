@@ -99,6 +99,9 @@ public class Restaurant extends User {
 	public Menu getMenu() {
 		return menu;
 	}
+	public void displayMenu() {
+		System.out.println(this.menu.getItems());
+	}
 	
 	/**
 	 * Sets a meal as a special offer with the 
@@ -120,5 +123,7 @@ public class Restaurant extends User {
 	public void addDeliveredOrder() {
 		this.numDeliveredOrders++;
     }
+	@Override
+	public String getUserType() {return "restaurant";}
 
 }
