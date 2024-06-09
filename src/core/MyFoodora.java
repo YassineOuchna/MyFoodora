@@ -174,6 +174,15 @@ public class MyFoodora implements SubscriberObservable {
 		}
 		throw (new UserNotFoundException("User of name \"" + name + "\" not in the system"));
 	}
+	
+	public User findUserByUserName(String username) throws UserNotFoundException {
+		for (User user : this.users) {
+			if (user.getUsername().equals(username)) {
+				return (user);
+			}
+		}
+		throw (new UserNotFoundException("User of name \"" + username + "\" not in the system"));
+	}
 
 	public HashMap<Integer, Integer> getHashedPasswords() {
 		return hashedPasswords;
@@ -369,5 +378,5 @@ public class MyFoodora implements SubscriberObservable {
 			exception.printStackTrace();
 		}
 	}
-
+	
 }

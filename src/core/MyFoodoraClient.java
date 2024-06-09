@@ -1,5 +1,7 @@
 package core;
 import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Scanner;
 import java.util.NoSuchElementException ;
 import java.util.StringTokenizer ;
@@ -7,11 +9,14 @@ import java.util.StringTokenizer ;
 import core.exceptions.*;
 import core.food.*;
 import core.orders.*;
+import core.policies.DeliveryPolicy.*;
+import core.policies.*;
 import core.users.*;
 import core.fidelityCards.*;
 
 import java.util.ArrayList ;
 import java.util.Calendar;
+import java.util.Date;
 
 public class MyFoodoraClient{
 
@@ -535,9 +540,13 @@ public class MyFoodoraClient{
 					error = true ;
 				}
 				if(!error){
-					currentManager.addUser("restaurant", restaurantName, "", restaurantUserName, restaurantPassword);
+					Restaurant r=new Restaurant(restaurantUserName,restaurantPassword);
+					r.setName(restaurantName);
+					
+					
+					currentManager.addUser(r);
 					try{
-						((Restaurant)currentManager.getMyFoodora().findUserByName(restaurantName)).setAddress(new double [] {restaurantX,restaurantY});
+						((Restaurant)currentManager.getMyFoodora().findUserByName(restaurantName)).setLocation(new double [] {restaurantX,restaurantY});
 						System.out.println("The restaurant has been registered. Here are its properties : ") ;
 						System.out.println(currentManager.getMyFoodora().findUserByName(restaurantName));
 					}catch(UserNotFoundException e){
@@ -571,9 +580,12 @@ public class MyFoodoraClient{
 					error = true ;
 				}
 				if(!error){
-					currentManager.addUser("customer", customerName, customerSurname, customerUserName, customerPassword);
+					Customer c=new Customer(customerUserName,customerPassword);
+					c.setSurname(customerSurname);
+					
+					currentManager.addUser(c);
 					try{
-						((Customer)currentManager.getMyFoodora().findUserByName(customerName)).setAddress(new Position(customerX,customerY));
+						((Customer)currentManager.getMyFoodora().findUserByName(customerName)).setAddress(new double [] {customerX,customerY});
 						System.out.println("The customer has been registered. Here are its properties : ") ;
 						System.out.println(currentManager.getMyFoodora().findUserByName(customerName));
 					}catch(UserNotFoundException e){
@@ -584,8 +596,6 @@ public class MyFoodoraClient{
 			case("registerCourier"):
 				st.nextToken("\"");
 				String courierName = st.nextToken("\"");
-				st.nextToken("\"");
-				String courierSurname = st.nextToken("\"");
 				st.nextToken("\"");
 				String courierUserName = st.nextToken("\"");
 				st.nextToken("\"");
@@ -607,9 +617,11 @@ public class MyFoodoraClient{
 					error = true ;
 				}
 				if(!error){
-					currentManager.addUser("courier", courierName, courierSurname, courierUserName, courierPassword);
+					Courier c= new Courier(courierUserName,courierPassword);
+					c.setName(courierName);
+					currentManager.addUser(c);
 					try{
-						((Courier)currentManager.getMyFoodora().findUserByName(courierName)).setPosition(new Position(courierX,courierY));
+						((Courier)currentManager.getMyFoodora().findUserByName(courierName)).setPosition(new double []{courierX,courierY});
 						System.out.println("The courier has been registered. Here are its properties : ") ;
 						System.out.println(currentManager.getMyFoodora().findUserByName(courierName));
 					}catch(UserNotFoundException e){
@@ -632,7 +644,16 @@ public class MyFoodoraClient{
 					error = true ;
 				}
 				if(!error){
-					currentManager.setDeliveryPolicy(delPolicyName);
+					DeliveryPolicy policy=null;
+					if (delPolicyName.equals("fairOccupation")) {
+						policy= new FairOcuppationDelivery();
+					}
+					else if (delPolicyName.equals("fastets")) {
+						policy= new FastestDelivery();
+					}
+					
+					
+					currentManager.setDeliveryPolicy(policy);
 				}
 				return "next" ;
 			case("meetTargetProfit"):
@@ -660,40 +681,24 @@ public class MyFoodoraClient{
 				}
 				if(!error){
 					try{
-						System.out.println("You can reach a profit of "+targetProfit+" by changing the "+profitPolicyName+" to "+currentManager.meetTargetProfit(profitPolicyName,targetProfit)+".");
-					}catch(NonReachableTargetProfitException e){
+						currentManager.meetTargetProfit(targetProfit);
+						double value=0;
+						if (profitPolicyName.equals("serviceFee")) {
+							value=MyFoodora.getInstance().getServiceFee();
+						}
+						else if (profitPolicyName.equals("markup")) {
+							value=MyFoodora.getInstance().getMarkupPercentage();
+						}
+						else if (profitPolicyName.equals("deliveryCost")) {
+							value=MyFoodora.getInstance().getDeliveryCost();
+						}
+						System.out.println("You can reach a profit of " + targetProfit +" by changing the "+ profitPolicyName +" to "+ value +".");
+					}catch(ProfitUnreachableException e){
 						System.err.println("It is impossible to reach the profit value "+targetProfit+".");
 					}
 				}
 				return "next" ;
-			case("setProfitInfoValue"):
-				st.nextToken("\"");
-				String profitInfoName = st.nextToken("\"");
-				switch(profitInfoName){
-				case("serviceFee"):case("markup"):case("deliveryCost"):
-					break ;
-				default :
-					System.err.println("The <profitInfoName> parameter must be \"deliveryCost\", \"markup\" or \"serviceFee\".");
-					error = true ;
-				}
-				st.nextToken("\"");
-				String valueString = st.nextToken("\"");
-				double value = 0 ;
-				try{
-					value = Double.parseDouble(valueString) ;
-				}catch(NumberFormatException e){
-					System.err.println("The <value> parameter is invalid : you must enter a value (ex : \"2142.24\").");
-					error = true ;
-				}
-				if(st.hasMoreTokens()){	
-					System.err.println("The command \"setProfitInfoValue <profitInfoName> <value>\" has only 2 parameters.");
-					error = true ;
-				}
-				if(!error){
-					currentManager.setProfitInfo(profitInfoName, value);
-					System.out.println("The "+profitInfoName+" value has been setted to "+value+".");
-				}
-				return "next" ;
+			
 			case("associateCard"):
 				st.nextToken("\"");
 				String customerUsername = st.nextToken("\"");
@@ -712,7 +717,7 @@ public class MyFoodoraClient{
 				}
 				if(!error){
 					try{
-						User fidelUser = myFoodora.findUserByUsername(customerUsername);
+						User fidelUser = myFoodora.findUserByUserName(customerUsername);
 						if(fidelUser.getUserType().equals("customer")){
 							Customer fidelCustomer = (Customer)fidelUser ;
 							fidelCustomer.registerFidelityCard(cardType);
@@ -732,25 +737,17 @@ public class MyFoodoraClient{
 				}
 				if(!error){
 					System.out.println("Here are the activated couriers of the platform :");
-					Courier mostActiveCourier = new Courier("","","","") ;
-					ArrayList<Integer> activatedCourier = new ArrayList<Integer>() ;
+					Courier mostActiveCourier = new Courier("","") ;
+					ArrayList<Courier> activatedCourier = new ArrayList<Courier>() ;
 					while (mostActiveCourier!=null){
 						mostActiveCourier = currentManager.mostActiveCourier();
 						if(mostActiveCourier!=null){
-						activatedCourier.add(mostActiveCourier.getUniqueID());
-							try{
-								currentManager.deactivateUser(mostActiveCourier.getUniqueID());
-							}catch(UserNotFoundException e){
-								System.err.println("Error while displaying the couriers.");
-							}						
+						activatedCourier.add(mostActiveCourier);
+							currentManager.desactivateUser(mostActiveCourier);						
 							System.out.println(mostActiveCourier);
 						}else{
-							for(int i:activatedCourier){
-								try{
-									currentManager.activateUser(i);
-								}catch(UserNotFoundException e){
-									System.err.println("Error while displaying the couriers.");
-								}	
+							for(Courier i:activatedCourier){
+								currentManager.activateUser(i);	
 							}
 						}
 					}
@@ -764,25 +761,17 @@ public class MyFoodoraClient{
 				}
 				if(!error){
 					System.out.println("Here are the activated restaurants of the platform :");
-					Restaurant mostSellingRestaurant = new Restaurant("","","","") ;
-					ArrayList<Integer> activatedRestaurants = new ArrayList<Integer>() ;
+					Restaurant mostSellingRestaurant = new Restaurant("","") ;
+					ArrayList<Restaurant> activatedRestaurants = new ArrayList<Restaurant>() ;
 					while (mostSellingRestaurant!=null){
 						mostSellingRestaurant = currentManager.mostSellingRestaurant();
 						if(mostSellingRestaurant!=null){
-						activatedRestaurants.add(mostSellingRestaurant.getUniqueID());
-							try{
-								currentManager.deactivateUser(mostSellingRestaurant.getUniqueID());
-							}catch(UserNotFoundException e){
-								System.err.println("Error while displaying the restaurants.");
-							}						
+						activatedRestaurants.add(mostSellingRestaurant);
+							currentManager.desactivateUser(mostSellingRestaurant);						
 							System.out.println(mostSellingRestaurant);
 						}else{
-							for(int i:activatedRestaurants){
-								try{
-									currentManager.activateUser(i);
-								}catch(UserNotFoundException e){
-									System.err.println("Error while displaying the restaurants.");
-								}	
+							for(Restaurant i:activatedRestaurants){
+								currentManager.activateUser(i);	
 							}
 						}
 					}
@@ -797,7 +786,7 @@ public class MyFoodoraClient{
 				if(!error){
 					System.out.println("Here are the activated customers of the platform :");
 					for (User user : myFoodora.getUsers()){
-						if((user.getUserType().equals("customer")&&(user.isActivated()))){
+						if((user.getUserType().equals("customer")&&(user.isActive()))){
 							System.out.println(user);							
 						}
 					}
@@ -846,43 +835,48 @@ public class MyFoodoraClient{
 						System.err.println("The command \"showTotalProfit <startDate> <endDate>\" has only 2 parameters.");
 						error = true ;
 					}
-					try{
-						day1 = Integer.parseInt(stringDay1);
-						day2 = Integer.parseInt(stringDay2);
-						month1 = Integer.parseInt(stringMonth1);
-						month2 = Integer.parseInt(stringMonth2);
-						year1 = Integer.parseInt(stringYear1);
-						year2 = Integer.parseInt(stringYear2);
-						if((day1<1)||(day1>31)||(day2<1)||(day2>31)||(month1<1)||(month1>12)||(month2<1)||(month2>12)){
-							System.err.println("Each date parameter must be in format \"DD/MM/YYYY\" (ex : \"28/01/2016\".");
-							error = true ;
-						}
-					}catch(NumberFormatException e){
-						System.err.println("Each date parameter must be in format \"DD/MM/YYYY\" (ex : \"28/01/2016\".");
-						error = true ;
+					try {
+					    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+					    System.out.println("Enter start date (DD/MM/YYYY):");
+					    String stringDate1 = sc.nextLine();
+					    System.out.println("Enter end date (DD/MM/YYYY):");
+					    String stringDate2 = sc.nextLine();
+
+					    // Parsing the dates
+					    Date date1 = sdf.parse(stringDate1);
+					    Date date2 = sdf.parse(stringDate2);
+
+					    Calendar start = Calendar.getInstance();
+					    start.setTime(date1);
+					    Calendar end = Calendar.getInstance();
+					    end.setTime(date2);
+
+					    // Check for invalid date ranges
+					    if (start.after(end)) {
+					        System.err.println("The start date must be before the end date.");
+					        error = true;
+					    }
+
+					    if (!error) {
+					        System.out.println("The total profit during this period is:");
+					        System.out.println(currentManager.getMyFoodora().computeTotalProfit(start.getTime(), end.getTime()));
+					    }
+
+					} catch (ParseException e) {
+					    System.err.println("Each date parameter must be in format \"DD/MM/YYYY\" (ex: \"28/01/2016\").");
+					    error = true;
 					}
-					Calendar start = Calendar.getInstance() ;
-					start.set(year1,month1-1,day1);
-					Calendar end = Calendar.getInstance() ;
-					end.set(year2,month2-1,day2);
-					if(start.compareTo(end)>0){
-						System.err.println("The startDate must be before the endDate.");
-						error = true ;
+
+					if (!error) {
+					    Calendar start = Calendar.getInstance();
+					    start.set(0, 0, 0);
+					    Calendar end = Calendar.getInstance();
+
+					    System.out.println("The total profit since the creation is:");
+					    System.out.println(currentManager.getMyFoodora().computeTotalProfit(start.getTime(), end.getTime()));
 					}
-					if(!error){
-						System.out.println("The total profit during this period is :");
-						System.out.println(currentManager.getMyFoodora().totalProfit(start, end));	
-					}
-				}else{
-					Calendar start = Calendar.getInstance() ;
-					start.set(0,0,0);
-					Calendar end = Calendar.getInstance() ;
-					if(!error){
-						System.out.println("The total profit since the creation is :");
-						System.out.println(currentManager.getMyFoodora().totalProfit(start, end));	
-					}
-				}
-				return "next" ;
+				return "next" ;}
 			case("activateUser"):
 				st.nextToken("\"");
 				String username = st.nextToken("\"");
@@ -892,12 +886,12 @@ public class MyFoodoraClient{
 				}
 				if(!error){
 					try{
-						User user = myFoodora.findUserByUsername(username);
-						if(user.isActivated()){
+						User user = myFoodora.findUserByUserName(username);
+						if(user.isActive()){
 							System.err.println("The user \""+username+"\" is already activated.");
 						}else{
 							System.out.println("The user \""+username+"\" has been activated.");
-							user.setActivated(true);
+							user.setActive(true);
 						}
 					}catch(UserNotFoundException e){
 						System.err.println("The user of username \""+username+"\" does not exist.");
@@ -913,12 +907,12 @@ public class MyFoodoraClient{
 				}
 				if(!error){
 					try{
-						User user = myFoodora.findUserByUsername(username);
-						if(!user.isActivated()){
+						User user = myFoodora.findUserByUserName(username);
+						if(!user.isActive()){
 							System.err.println("The user \""+username+"\" is already deactivated.");
 						}else{
 							System.out.println("The user \""+username+"\" has been deactivated.");
-							user.setActivated(false);
+							user.setActive(false);
 						}
 					}catch(UserNotFoundException e){
 						System.err.println("The user of username \""+username+"\" does not exist.");
@@ -957,7 +951,7 @@ public class MyFoodoraClient{
 			switch (commande){
 			case("help"):
 				System.out.println("\"showMenuItem <>\" : display your menu\n"
-						+ "\"addDishRestaurantMenu <dishName> <dishCategory> <foodCategory> <unitPrice>\" : add a new dish to your menu\n"
+						+ "\"addDishRestaurantMenu <dishName> <dishCategory> <foodCategory> <containsGluten 0 or 1> <unitPrice>\" : add a new dish to your menu\n"
 						+ "\"createMeal <mealName> <mealCategory>\" : creates a new meal with mealname and mealCategory (\"full\" or \"half\")\n"
 						+ "\"addDish2Meal <dishName> <mealName>\" : adds a dish to a meal\n"
 						+ "\"showMeal <mealName>\" : displays the indicated meal\n"
@@ -998,9 +992,18 @@ public class MyFoodoraClient{
 				case("standard"):case("vegetarian"):case("glutenFree"):
 					break ;
 				default :
-					System.err.println("The <foodCategory> parameter is wrong. The possible values are \"standard\", \"vegetarian\" and \"glutenFree\".");
+					System.err.println("The <foodCategory> parameter is wrong. The possible values are \"standard\", \"vegetarian\".");
 					error = true ;			
 				}
+				st.nextToken("\"");
+				String containsGluten = st.nextToken("\""); 
+				int gluten= Integer.valueOf(containsGluten);
+				
+				default :
+					System.err.println("The <contains> parameter is wrong. The possible values are 0 and 1");
+					error = true ;			
+				
+				
 				st.nextToken("\"");
 				String priceString = st.nextToken("\"");
 				double price = 0;
@@ -1019,7 +1022,9 @@ public class MyFoodoraClient{
 					error = true ;
 				}
 				if(!error){
-					currentRestaurant.addDish(dishCategory, dishName, price, foodCategory);
+					String[] dishDesc = new String[] {dishName,dishCategory,foodCategory,containsGluten,priceString};
+					//String[] mealDesc= new String[] {dishName,dishCategory,foodCategory,containsGluten,priceString};
+ 					currentRestaurant.getMenu().addItem("dish", dishDesc);
 					System.out.println("The "+foodCategory+" "+dishCategory+" "+dishName+" has been added to your menu for "+price+" euros.");
 				}
 				return "next" ;
@@ -1040,8 +1045,12 @@ public class MyFoodoraClient{
 					error = true ;
 				}
 				if(!error){
-					currentRestaurant.addMeal(mealCategory, mealName);
-					System.out.println("The "+mealCategory+" "+mealName+" has been created and added to your menu.");
+					ArrayList<String> mealDesc= new ArrayList<String>();
+					mealDesc.add(mealName);
+					currentRestaurant.addMenuItem("meal", mealDesc);
+					System.out.println("The "+mealCategory+" "+mealName+" has been created and needs "
+							+ ((mealCategory == "full") ? ("3 dishes.") : ("2 dishes.")));
+					System.out.println("To do so, use \"addDish2Meal <dishName> <mealName> \"");
 				}
 				return "next" ;
 			case("addDish2Meal"):
@@ -1055,7 +1064,7 @@ public class MyFoodoraClient{
 				}
 				if(!error){
 					try{
-						currentRestaurant.addDish2Meal(mName,dName);
+						String dish1 = dName;
 						System.out.println("Here is the updated meal");
 						System.out.println(currentRestaurant.findMealByName(mName));
 					}
@@ -1099,7 +1108,7 @@ public class MyFoodoraClient{
 					error = true  ;
 				}
 				if(!error){
-					currentRestaurant.setSpecialDiscountFactor(discountFactor);
+					currentRestaurant.setSpecialDiscount(discountFactor);
 					System.out.println("The discount factor is : "+discountFactor);
 				
 				}
@@ -1119,7 +1128,7 @@ public class MyFoodoraClient{
 					error = true  ;
 				}
 				if(!error){
-					currentRestaurant.setGenericDiscountFactor(genericFactor);
+					currentRestaurant.setGenericDiscount(genericFactor);
 					System.out.println("The generic discount factor is : "+genericFactor);
 				
 				}
@@ -1133,12 +1142,13 @@ public class MyFoodoraClient{
 				}
 				if(!error){
 					try{
-						currentRestaurant.setMealOfTheWeek(mealName, myFoodora);
+						Meal m = (Meal) currentRestaurant.getMenu().getItem(mealName);
+						currentRestaurant.setSpecialOffer(m);
 						System.out.println("Here is the new meal of the week :");
-						System.out.println(currentRestaurant.getMenu().getMealOfTheWeek());
+						System.out.println(currentRestaurant.getMenu().getSpecialOffer());
 					}
-					catch(FoodItemNotFoundException e){
-						System.err.println("The meal"+mealName+" does not exist.");
+					catch(ItemNotInMenuException e){
+						System.err.println(e.getMessage());
 					}
 				}
 				return "next" ;
@@ -1148,6 +1158,7 @@ public class MyFoodoraClient{
 					error = true ;
 				}
 				if(!error){
+					
 					currentRestaurant.displaySortedFoodItems("meal");
 				}
 				return "next" ;

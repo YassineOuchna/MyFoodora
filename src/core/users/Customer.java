@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import core.MyFoodora;
 import core.fidelityCards.BasicFidelityCard;
 import core.fidelityCards.FidelityCard;
+import core.fidelityCards.LotteryFidelityCard;
+import core.fidelityCards.PointFidelityCard;
 import core.orders.Order;
 
 
@@ -112,6 +114,17 @@ public class Customer extends User implements SubscriberObserver{
 	public void registerFidelityCard(FidelityCard fidelityCard) {
 		if (!(this.fidelityCard.getClass() == fidelityCard.getClass())) {
 			this.fidelityCard = fidelityCard;
+		}
+	}
+	public void registerFidelityCard(String fidelityCardType) {
+		if (fidelityCardType.equals("basic")) {
+			this.fidelityCard = new BasicFidelityCard();
+		}
+		else if (fidelityCardType.equals("point")) {
+			this.fidelityCard = new PointFidelityCard();
+		}
+		else if (fidelityCardType.equals("lottery")) {
+			this.fidelityCard = new LotteryFidelityCard();
 		}
 	}
 	
