@@ -287,6 +287,16 @@ public class MyFoodoraClient{
 			userType = currentUser.getUserType();
 			System.out.println("You have successfully logged in the system !\n");
 			System.out.println("Welcome "+currentUser.getName());			
+			if (currentUser.getClass() == Customer.class) {
+					System.out.println("Here are the activated restaurants of the platform :");
+					for (Restaurant r : myFoodora.getRestaurants()) {
+						if(r.isActive()) {
+							System.out.println(r);
+						}
+						
+					}
+				
+			}
 		}catch(IncorrectIdentificationException e){
 			System.out.println("Sorry " + e.getMessage() + "\n"
 					+ "Please try again \n");
@@ -332,6 +342,13 @@ public class MyFoodoraClient{
 		String commande ;
 		boolean error = false ;
 		try{
+				System.out.println("\"createOrder <restaurantName>\" : create a new order\n"
+						+ "\"addItem2Order <itemName>\" : add a dish or a meal to the menu\n"
+						+ "\"endOrder <applyReduction> : submit the order to today's date and applies the order depending on the applyReduction value \"yes\" or \"no\"\n"
+						+ "\"registerFidelityCard <cardType>\" : associate a new fidelity card (\"basic\", \"point\" or \"lottery\")\n"
+						+ "\"displayFidelityInfo <>\" : displays the fidelity info\n"
+						+ "\"historyOfOrders <>\" : displays the history of orders\n"
+						+"\"logout\" : logout\n") ;
 			commande = st.nextToken() ;
 			switch (commande){
 			case("help"):
@@ -516,6 +533,10 @@ public class MyFoodoraClient{
 		boolean error = false ;
 		String commande ;
 		try{
+				System.out.println("\"onDuty <>\" : set state to on duty\n"
+						+ "\"offDuty <>\" : set state to off duty\n"
+						+ "\"acceptDeliveryCall <orderID> <answer> : accept (<answer> = \"yes\") or refuse (<answer> = \"no\") the delivery call for the orderID\n"
+						+ "\"logout\" : log out\n");
 			commande = st.nextToken() ;
 			switch (commande){
 			case("help"):
@@ -575,6 +596,23 @@ public class MyFoodoraClient{
 		boolean error = false ;
 		String commande ;
 		try{
+				System.out.println("\"registerRestaurant <name> <username> <password> <address> : register a new restaurant\n"
+						+ "\"registerCustomer <firstName> <lastName> <username> <password> <address> : register a new customer\n"
+						+ "\"registerCourier <firstName> <lastName> <username> <password> <address> : register a new courier\n"
+						+ "\"setDeliveryPolicy <delPolicyName>\" : set the delivery policy to \"fastest\" or \"fairOccupation\"\n"
+						+ "\"meetTargetProfit <profitInfoName> <targetProfit>\" : show how to set the value of the profit info (\"deliveryCost\", \"serviceFee\" or \"markup\") to meet the target profit.\n"
+						+ "\"setProfitInfoValue <profitInfoName> <value>\" : sets the profitInfo (\"deliveryCost\", \"serviceFee\" or \"markup\") to the value\n"
+						+ "\"associateCard <userName> <cardType>\" : associate a new fidelity card (\"basic\", \"point\" or \"lottery\" to the user\n"
+						+ "\"showCourierDeliveries <>\" : displays all the Courier ordered by the number of delivered orders\n"
+						+ "\"showRestaurantTop <>\" : displays all the Restaurants ordered by the number of orders sold\n"
+						+ "\"showCustomers <>\" : displays all the Customers\n"
+						+ "\"showMenuItem <restaurantName>\" : displays the menu of the restaurant\n"
+						+ "\"showTotalProfit <>\" : displays the total profit of MyFoodora.\n"
+						+ "\"showTotalProfit <startDate> <endDate>\" : displays the profit between statDate and endDate (format DD/MM/YYYY)\n"
+						+ "\"activateUser <username>\" : activates the user\n"
+						+ "\"deactivateUser <username>\" : deactivates the user\n"
+						+ "\"logout\" : log out"
+						);
 			commande = st.nextToken() ;
 			switch (commande){
 			case("help"):
@@ -1067,6 +1105,17 @@ public class MyFoodoraClient{
 		String commande ;
 		boolean error = false ;
 		try{
+				System.out.println("\"showMenuItem <>\" : display your menu\n"
+						+ "\"addDishRestaurantMenu <dishName> <dishCategory> <foodCategory> <containsGluten 0 or 1> <unitPrice>\" : add a new dish to your menu\n"
+						+ "\"createMeal <mealName> <mealCategory>\" : creates a new meal with mealname and mealCategory (\"full\" or \"half\")\n"
+						+ "\"addDish2Meal <dishName> <mealName>\" : adds a dish to a meal\n"
+						+ "\"showMeal <mealName>\" : displays the indicated meal\n"
+						+ "\"setSpecialOffer <mealName>\" : sets the meal of the week\n"
+						+ "\"setSpecialDiscountFactor <value>\" : sets the special discount factor\n"
+						+ "\"setSpecialDiscountFactor <value>\" : sets the generic discount factor\n"
+						+ "\"showSortedMeals <> : displays all the meals w.r.t. the number of times they have been picked\n"
+						+ "\"showSortedDishes <> : displays all the dishes w.r.t. the number of times they have been picked\n"
+						+ "\"logout\" : log out\n");
 			commande = st.nextToken() ;
 			switch (commande){
 			case("help"):

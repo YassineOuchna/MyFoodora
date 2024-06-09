@@ -1,9 +1,16 @@
 registerManager managername manager1 manager1
-registerRestaurant restaurant_name restaurant1 restaurant1 12,15
-registerCustomer customerName customerLastName customer1 customer1 taboun@gmail.fr 0661674121 2,6
+registerCustomer customerName customerLastName customerUsername customerPass taboun@gmail.fr 0661674121 2,6
 y
-registerCourier courierName courier1 courier1 1,3
-login customer1 customer1
+registerRestaurant restaurant_name restaurantUsername restaurantPass 12,15
+login restaurantUsername restaurantPass
+
+logout 
+registerCourier courierName courierUsername courierPass 1,3
+login courierUsername courierPass
+onDuty
+logout
+login customerUsername customerPass
+createOrder restaurant_name
 logout
 login manager1 manager1
 showCustomers
