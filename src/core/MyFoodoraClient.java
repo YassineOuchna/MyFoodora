@@ -7,6 +7,8 @@ import java.util.StringTokenizer ;
 import core.exceptions.*;
 import core.food.*;
 import core.orders.*;
+import core.policies.DeliveryPolicy.*;
+import core.policies.*;
 import core.users.*;
 import core.fidelityCards.*;
 
@@ -535,9 +537,13 @@ public class MyFoodoraClient{
 					error = true ;
 				}
 				if(!error){
-					currentManager.addUser("restaurant", restaurantName, "", restaurantUserName, restaurantPassword);
+					Restaurant r=new Restaurant(restaurantUserName,restaurantPassword);
+					r.setName(restaurantName);
+					
+					
+					currentManager.addUser(r);
 					try{
-						((Restaurant)currentManager.getMyFoodora().findUserByName(restaurantName)).setAddress(new double [] {restaurantX,restaurantY});
+						((Restaurant)currentManager.getMyFoodora().findUserByName(restaurantName)).setLocation(new double [] {restaurantX,restaurantY});
 						System.out.println("The restaurant has been registered. Here are its properties : ") ;
 						System.out.println(currentManager.getMyFoodora().findUserByName(restaurantName));
 					}catch(UserNotFoundException e){
@@ -571,9 +577,12 @@ public class MyFoodoraClient{
 					error = true ;
 				}
 				if(!error){
-					currentManager.addUser("customer", customerName, customerSurname, customerUserName, customerPassword);
+					Customer c=new Customer(customerUserName,customerPassword);
+					c.setSurname(customerSurname);
+					
+					currentManager.addUser(c);
 					try{
-						((Customer)currentManager.getMyFoodora().findUserByName(customerName)).setAddress(new Position(customerX,customerY));
+						((Customer)currentManager.getMyFoodora().findUserByName(customerName)).setAddress(new double [] {customerX,customerY});
 						System.out.println("The customer has been registered. Here are its properties : ") ;
 						System.out.println(currentManager.getMyFoodora().findUserByName(customerName));
 					}catch(UserNotFoundException e){
@@ -607,9 +616,11 @@ public class MyFoodoraClient{
 					error = true ;
 				}
 				if(!error){
-					currentManager.addUser("courier", courierName, courierSurname, courierUserName, courierPassword);
+					Courier c= new Courier(courierUserName,courierPassword);
+					c.setName(courierName);
+					currentManager.addUser(c);
 					try{
-						((Courier)currentManager.getMyFoodora().findUserByName(courierName)).setPosition(new Position(courierX,courierY));
+						((Courier)currentManager.getMyFoodora().findUserByName(courierName)).setPosition(new double []{courierX,courierY});
 						System.out.println("The courier has been registered. Here are its properties : ") ;
 						System.out.println(currentManager.getMyFoodora().findUserByName(courierName));
 					}catch(UserNotFoundException e){
@@ -632,7 +643,16 @@ public class MyFoodoraClient{
 					error = true ;
 				}
 				if(!error){
-					currentManager.setDeliveryPolicy(delPolicyName);
+					DeliveryPolicy policy=null;
+					if (delPolicyName.equals("fairOccupation")) {
+						policy= new FairOcuppationDelivery();
+					}
+					else if (delPolicyName.equals("fastets")) {
+						policy= new FastestDelivery();
+					}
+					
+					
+					currentManager.setDeliveryPolicy(policy);
 				}
 				return "next" ;
 			case("meetTargetProfit"):
@@ -660,8 +680,8 @@ public class MyFoodoraClient{
 				}
 				if(!error){
 					try{
-						System.out.println("You can reach a profit of "+targetProfit+" by changing the "+profitPolicyName+" to "+currentManager.meetTargetProfit(profitPolicyName,targetProfit)+".");
-					}catch(NonReachableTargetProfitException e){
+						System.out.println("You can reach a profit of "+ targetProfit +" by changing the "+ profitPolicyName +" to "+ currentManager.meetTargetProfit(targetProfit) +".");
+					}catch(ProfitUnreachableException e){
 						System.err.println("It is impossible to reach the profit value "+targetProfit+".");
 					}
 				}

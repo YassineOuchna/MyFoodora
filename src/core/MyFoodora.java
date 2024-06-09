@@ -366,5 +366,5 @@ public class MyFoodora implements SubscriberObservable {
 			exception.printStackTrace();
 		}
 	}
-
+	
 }

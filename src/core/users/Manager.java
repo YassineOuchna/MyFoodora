@@ -212,5 +212,7 @@ public class Manager extends User{
 	
 	@Override
 	public String getUserType() {return "manager";}
+	
+	public MyFoodora getMyFoodora() {return app;}
     
 }
