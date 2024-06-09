@@ -203,7 +203,7 @@ public class MyFoodoraClient{
 							System.out.println("Error while creating the user.");
 						}
 						System.out.println("Would you like to be notified of special Offers ? y/n");
-						for (int i =0; i<3; i++) {
+						for (int i =0; i<1; i++) {
 							input = sc.nextLine();
 							st = new StringTokenizer(input) ;
 							String answer= "";
@@ -213,6 +213,7 @@ public class MyFoodoraClient{
 								System.out.println("Asnwer with either y or n");
 							}
 							if (answer == "y") {
+								System.out.println("Notification On");
 								newCustomer.setNotificationsOn(true);
 								break;
 							}
@@ -295,7 +296,6 @@ public class MyFoodoraClient{
 						}
 						
 					}
-				
 			}
 		}catch(IncorrectIdentificationException e){
 			System.out.println("Sorry " + e.getMessage() + "\n"
@@ -777,7 +777,7 @@ public class MyFoodoraClient{
 							System.out.println("Error while creating the user.");
 						}
 						System.out.println("Would you like to be notified of special Offers ? y/n");
-						for (int i =0; i<3; i++) {
+						for (int i =0; i<1; i++) {
 							input = sc.nextLine();
 							st = new StringTokenizer(input) ;
 							String answer= "";
@@ -788,6 +788,7 @@ public class MyFoodoraClient{
 							}
 							if (answer == "y") {
 								newCustomer.setNotificationsOn(true);
+								System.out.println("Notification done");
 								break;
 							}
 								
