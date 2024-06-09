@@ -1,8 +1,10 @@
 package core.users;
 import java.util.ArrayList;
 
+import core.MyFoodora;
 import core.fidelityCards.BasicFidelityCard;
 import core.fidelityCards.FidelityCard;
+import core.orders.Order;
 
 
 
@@ -134,6 +136,33 @@ public class Customer extends User implements SubscriberObserver{
 
 	public FidelityCard getFidelityCard() {
 		return fidelityCard;
+	}
+	@Override
+	public String getUserType() {return "customer";}
+	
+	/**
+	 * displays the informations of the user's fidelity card plan
+	 */
+	public void displayFidelityInfo(){
+		System.out.println(this.fidelityCard.toString());
+	}
+	
+	/**
+	 * gets the history of all the orders the customer made on MyFoodora
+	 * @param myFoodora : the MyFoodora core
+	 * @return historyOfOrders : all the orders the customer made on MyFoodora
+	 */
+	public ArrayList<Order> getHistoryOfOrders (MyFoodora myFoodora){
+		ArrayList<Order> historyOfOrders = new ArrayList<Order>();
+		
+		ArrayList<Order> completedOrders = myFoodora.getCompletedOrders();
+		for(Order order : completedOrders){
+			//we seek the completed orders made by the customer
+			if (order.getCustomer().getId() == this.getId()){
+				historyOfOrders.add(order);
+			}
+		}
+		return historyOfOrders;
 	}
 
 

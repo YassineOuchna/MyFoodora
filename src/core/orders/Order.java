@@ -1,12 +1,11 @@
 package core.orders;
 
 import core.food.*;
-import core.policies.DeliveryPolicy;
 import core.MyFoodora;
 import core.exceptions.ItemNotInMenuException;
 import core.exceptions.ItemNotInOrderException;
 import core.users.Restaurant;
-import core.users.Courrier;
+import core.users.Courier;
 import core.users.Customer;
 
 import java.util.ArrayList;
@@ -15,6 +14,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Order {
+	private static int nextId=0;
+	private int id;
+	
+
 	private Customer customer;
 	/*
 	 * An Order has a name and belongs to a 
@@ -39,15 +42,15 @@ public class Order {
      */
     private Date date;
     
-    /*
-     * We need to store all delivered Orders
-     */
-    private static ArrayList<Order> deliveredOrders = new ArrayList<Order>();
+    /**
+	 * the courier who will delivery the order
+	 */
+	private Courier courier ;
 
     
-    
-
 	public Order(Restaurant restaurant,String name) {
+		nextId++;
+		this.id=nextId;
         this.restaurant = restaurant;
         this.name= name;
         this.orderItems = new HashMap<>();
@@ -55,6 +58,8 @@ public class Order {
         this.date= new Date();
     }
 	public Order(Restaurant restaurant,String name, Customer customer) {
+		nextId++;
+		this.id=nextId;
         this.restaurant = restaurant;
         this.name= name;
         this.orderItems = new HashMap<>();
@@ -63,6 +68,9 @@ public class Order {
         this.date= new Date();
     }
 	
+	public int getId() {
+		return id;
+	}
 	/**
 	 * Adds an item to order
 	 * @params MenuItem item
@@ -130,48 +138,60 @@ public class Order {
 		this.name = name;
 	}
 	public static ArrayList<Order> getAllDeliveredOrders() {
-        return deliveredOrders;
+        return MyFoodora.getInstance().getCompletedOrders();
     }
 	public Customer getCustomer() {
 		return customer;
 	}
 	
-	/**
-	 * Finds and returns a courier for the order delivery
-	 * @return Courier courier
-	 */
-	
-	public Courrier findDeliverer(){
-		MyFoodora app = MyFoodora.getInstance();
-		ArrayList<Courrier> availableCourriers = Courrier.getAvailableCourriers();
-        DeliveryPolicy policy = app.getDeliveryPolicy();
-        Courrier selectedCourier = policy.assignCourrier(availableCourriers, this);
-
-        if (selectedCourier != null) {
-            Call call = new Call(this);
-            if (selectedCourier.acceptDeliveryCall(call)) {
-                return selectedCourier;
-            }
-        }
-        return null;
-	}
 	
 	/**
 	 * Ends the order, making it unmodifiable
 	 */
 	public void endOrder() {
 		ordering=false;
-		customer.pay(this.getPrice());
+		
+		double discount=customer.getFidelityCard().getFidelityDiscount();
+		customer.pay(this.getPrice()*(1-discount));
 		customer.getFidelityCard().updateCard(this);
+		
 		for (MenuItem item : orderItems.keySet()) {
 			item.orderFrequency=item.orderFrequency+orderItems.get(item);
 		}
-		deliveredOrders.add(this);
-		restaurant.addDeliveredOrder();
+
 	}
 	public Date getDate() {
 		return date;
 	}
-
 	
+	public Courier getCourier() {
+		return courier;
+	}
+
+	public void setCourier(Courier courier) {
+		this.courier = courier;
+		//we put the order on the board of the courier
+		this.courier.getBoard().add(this);
+	}
+
+	/**
+	 * indicate that the courier has accepted the delivery call of this order
+	 * 		the order is then completed
+	 */
+	public void validateOrderByCourier (){
+		this.courier.increaseCounter();
+		MyFoodora.getInstance().addCompletedOrder(this);
+		restaurant.addDeliveredOrder();
+	}
+	
+	@Override
+	public String toString() {
+		return "Order [dateOfOrder=" + date + "\n" 
+				+ "customer=" + customer + "\n" 
+				+ "restaurant=" + restaurant + "\n" 
+				+ "items=" + orderItems + "\n"
+				+ "price=" + this.getPrice() + "\n"
+				+ "courier=" + courier + "\n"
+				+ "addressOfDelivery=" + customer.getAddress() + "]\n";
+	}
 }

@@ -1,9 +1,8 @@
 package core.policies;
-import java.util.ArrayList;
-import core.users.*;
-import core.orders.*;
+
+import core.orders.Order;
 
 public interface DeliveryPolicy {
-	public Courrier assignCourrier(ArrayList<Courrier> courriers, Order order);
+	public void assignCourrier(Order order);
 
 }

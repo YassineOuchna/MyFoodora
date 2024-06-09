@@ -4,9 +4,11 @@ import java.util.Scanner;
 import java.util.NoSuchElementException ;
 import java.util.StringTokenizer ;
 
-import core.orders.Order;
-import core.users.Customer;
-import core.users.User;
+import core.exceptions.*;
+import core.food.*;
+import core.orders.*;
+import core.users.*;
+import core.fidelityCards.*;
 
 import java.util.ArrayList ;
 import java.util.Calendar;
@@ -21,7 +23,7 @@ public class MyFoodoraClient{
 	private static User currentUser ;
 	private static Order currentOrder = null ;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ItemNotInMenuException {
 		myFoodora = MyFoodora.getInstance();
 
 		myFoodora.displayUsers();
@@ -70,9 +72,11 @@ public class MyFoodoraClient{
 						error = true ;
 					}
 					if(!error){
-						myFoodora.getUserFactory().registerUser("customer", customerName, customerSurname, customerUserName, customerPassword,myFoodora);
+						Customer newCustomer = new Customer(customerUserName, customerPassword, customerName, customerSurname);
+                        newCustomer.setAddress(new double[]{customerX, customerY});
+                        myFoodora.addUser(newCustomer);
 						try{
-							((Customer)myFoodora.findUserByName(customerName)).setAddress(new Position(customerX,customerY));
+							((Customer)myFoodora.findUserByName(customerName)).setAddress(new double [] {customerX,customerY});
 							System.out.println("You have been registered. Here is your accounts informations : ") ;
 							System.out.println(myFoodora.findUserByName(customerName));
 						}catch(UserNotFoundException e){
@@ -144,10 +148,10 @@ public class MyFoodoraClient{
 			userType = currentUser.getUserType();
 			System.out.println("You have successfully logged in the system !\n");
 			System.out.println("Welcome "+currentUser.getName());			
-		}catch(IdentificationIncorrectException e){
+		}catch(IncorrectIdentificationException e){
 			System.out.println("Sorry " + e.getMessage() + "\n"
 					+ "Please try again \n");
-		}catch(AccountDeactivatedException e){
+		}catch(AccountDesactivatedException e){
 			System.out.println("Sorry " + e.getMessage() + "\n"
 					+ "Your account has been deactivated : Please call a manager : +33 1 41 13 15 79 \n");
 		}catch(NoSuchElementException e){
@@ -159,8 +163,9 @@ public class MyFoodoraClient{
 	/**
 	 * Let the user use the platform with the commands he can use.
 	 * @param userType
+	 * @throws ItemNotInMenuException 
 	 */
-	private static String work(String userType){		
+	private static String work(String userType) throws ItemNotInMenuException{		
 		System.out.println("Type \"help\" to have a list of all available commands.");
 		input = sc.nextLine();
 		st = new StringTokenizer(input) ;
@@ -181,8 +186,9 @@ public class MyFoodoraClient{
 	/**
 	 * Works with all the possible commands that a customer can use
 	 * @return "next" to go to the next command or "logout" if the customer wanted to logout.
+	 * @throws ItemNotInMenuException 
 	 */
-	private static String workCustomer(){
+	private static String workCustomer() throws ItemNotInMenuException{
 		Customer currentCustomer = (Customer)currentUser ;
 		String commande ;
 		boolean error = false ;
@@ -219,7 +225,8 @@ public class MyFoodoraClient{
 					error = true ;
 				}
 				if(!error){
-					currentOrder = new Order(currentCustomer,orderedRestaurant);
+					String orderName=currentCustomer.getName();
+					currentOrder= new Order(orderedRestaurant,orderName,currentCustomer);
 					System.out.println("A new order has been created. Here is the restaurant's menu :");
 					currentOrder.getRestaurant().displayMenu();
 				}
@@ -238,20 +245,20 @@ public class MyFoodoraClient{
 				}
 				boolean itemNotExisting = true ;
 				String itemType = null ;
-				Dish orderedDish = null ;
-				Meal orderedMeal = null ;
+				MenuItem orderedDish = null ;
+				MenuItem orderedMeal = null ;
 				try{
-					orderedDish = currentOrder.getRestaurant().findDishByName(itemName) ;
+					orderedDish = currentOrder.getRestaurant().getMenu().getItem(itemName) ;
 					itemType = "dish" ;
 					itemNotExisting = false ;
-				}catch(FoodItemNotFoundException e){
+				}catch(ItemNotInMenuException e){
 					
 				}
 				try{
-					orderedMeal = currentOrder.getRestaurant().findMealByName(itemName) ;
+					orderedMeal = currentOrder.getRestaurant().getMenu().getItem(itemName) ;
 					itemType = "meal" ;
 					itemNotExisting = false ;
-				}catch(FoodItemNotFoundException e){
+				}catch(ItemNotInMenuException e){
 					
 				}
 				if(itemNotExisting){
@@ -261,15 +268,15 @@ public class MyFoodoraClient{
 				if(!error){
 					switch(itemType){
 					case("dish"):
-						currentOrder.addDish(orderedDish);
+						currentOrder.addItem2Order(orderedDish);
 						System.out.println("The dish \""+itemName+"\" has been added to your order.");
 						break ;
 					case("meal"):
-						currentOrder.addMeal(orderedMeal);
+						currentOrder.addItem2Order(orderedMeal);
 						System.out.println("The meal \""+itemName+"\" has been added to your order.");
 						break ;
 					}
-					System.out.println("The actual price of your order is "+currentOrder.computePrice());
+					System.out.println("The actual price of your order is "+currentOrder.getPrice());
 				}
 				return "next" ;
 			case("endOrder"):
@@ -299,7 +306,7 @@ public class MyFoodoraClient{
 					error = true ;
 					return "next" ;
 				}
-				if(currentOrder.computePrice()==0){
+				if(currentOrder.getPrice()==0){
 					System.err.println("You have not ordered anything.");
 					error = true ;
 				}
@@ -307,11 +314,11 @@ public class MyFoodoraClient{
 					System.out.println("Here is your order :");
 					System.out.println(currentOrder);
 					if(applyReductionBool){
-						if(currentCustomer.getFidelityCard().computeReduction(currentOrder)>0){
-							System.out.println("You have won "+currentCustomer.getFidelityCard().computeReduction(currentOrder)+" with your fidelity card.");
+						if(currentCustomer.getFidelityCard().getFidelityDiscount()>0){
+							System.out.println("You have won "+currentCustomer.getFidelityCard().getFidelityDiscount()+" with your fidelity card.");
 						}
 					}
-					currentCustomer.submitOrder(currentOrder, true, myFoodora);
+					currentOrder.endOrder();
 					currentOrder = null ;
 				}
 				return "next" ;
@@ -329,8 +336,19 @@ public class MyFoodoraClient{
 					System.err.println("The command \"registerFidelityCard <cardType>\" has only 1 parameter.");
 					error = true ;
 				}
-				if(!error){
-					currentCustomer.registerFidelityCard(cardType);
+				if(!error && (cardType.equals("basic") || cardType.equals("point") || cardType.equals("lottery"))  ){
+					FidelityCard card= null;
+					if (cardType.equals("basic")){
+						card= new BasicFidelityCard();
+					}
+					else if (cardType.equals("point")){
+						card= new PointFidelityCard();
+					}
+					else if (cardType.equals("lottery")){
+						card= new LotteryFidelityCard();
+					}
+							
+					currentCustomer.registerFidelityCard(card);
 					System.out.println("You have now a "+cardType+" fidelity card.");
 				}
 				return "next" ;
@@ -437,7 +455,7 @@ public class MyFoodoraClient{
 					error = true ;
 				}
 				try{
-					currentCourier.acceptDeliveryCall(bAnswer, currentCourier.getBoard().findObsById(orderID), myFoodora);
+					currentCourier.acceptDeliveryCall(bAnswer, currentCourier.findOrderIdInBoard(orderID));
 					System.out.println("You have "+(bAnswer?"accepted":"refused")+" to deliver the order n°"+ orderID+".\n") ;
 				}catch(OrderNotFoundException e){
 					System.err.println("This Order ID "+orderID+" is not in your board.");
@@ -519,7 +537,7 @@ public class MyFoodoraClient{
 				if(!error){
 					currentManager.addUser("restaurant", restaurantName, "", restaurantUserName, restaurantPassword);
 					try{
-						((Restaurant)currentManager.getMyFoodora().findUserByName(restaurantName)).setAddress(new Position(restaurantX,restaurantY));
+						((Restaurant)currentManager.getMyFoodora().findUserByName(restaurantName)).setAddress(new double [] {restaurantX,restaurantY});
 						System.out.println("The restaurant has been registered. Here are its properties : ") ;
 						System.out.println(currentManager.getMyFoodora().findUserByName(restaurantName));
 					}catch(UserNotFoundException e){

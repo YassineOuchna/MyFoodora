@@ -1,6 +1,5 @@
 package core.users;
 
-import java.util.ArrayList;
 
 import core.MyFoodora;
 import core.exceptions.InvalidItemDescription;
@@ -18,8 +17,6 @@ public class Restaurant extends User {
 	 */
 	private int numDeliveredOrders;
 	
-	// Static list to hold all restaurants
-    private static ArrayList<Restaurant> allRestaurants = new ArrayList<>();
 	
 	
 	public Restaurant(String newUsername, String password) {
@@ -33,7 +30,6 @@ public class Restaurant extends User {
 		this.genericDiscount = 0.05;
 		this.specialDiscount= 0.1;
 		this.numDeliveredOrders=0;
-		allRestaurants.add(this);
 	}
 
 	public Restaurant(String newUsername, String password, double[] location) {
@@ -47,7 +43,6 @@ public class Restaurant extends User {
 		this.genericDiscount = 0.05;
 		this.specialDiscount= 0.1;
 		this.numDeliveredOrders=0;
-		allRestaurants.add(this);
 	}
 	
 	
@@ -104,6 +99,9 @@ public class Restaurant extends User {
 	public Menu getMenu() {
 		return menu;
 	}
+	public void displayMenu() {
+		System.out.println(this.menu.getItems());
+	}
 	
 	public void setSpecialOffer(Meal specialOffer) {
 		MyFoodora app = MyFoodora.getInstance();
@@ -118,7 +116,7 @@ public class Restaurant extends User {
 	public void addDeliveredOrder() {
 		this.numDeliveredOrders++;
     }
-	public static ArrayList<Restaurant> getAllRestaurants() {
-        return allRestaurants;
-    }
+	@Override
+	public String getUserType() {return "restaurant";}
+
 }

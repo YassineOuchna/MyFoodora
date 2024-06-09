@@ -1,18 +1,17 @@
 package core.policies;
 
-import java.util.ArrayList;
-
+import core.MyFoodora;
 import core.orders.Order;
-import core.users.Courrier;
+import core.users.Courier;
 
 public class FairOcuppationDelivery implements DeliveryPolicy{
 
 	@Override
-	public Courrier assignCourrier(ArrayList<Courrier> courriers, Order order) {
-		Courrier selectedCourier = null;
+	public void assignCourrier(Order order) {
+		Courier selectedCourier = null;
         int leastDeliveries = Integer.MAX_VALUE;
 
-        for (Courrier courier : courriers) {
+        for (Courier courier : MyFoodora.getInstance().getCourriers()) {
         	if (courier.isOnDuty()) {
         		int deliveries = courier.getCompletedDeliveries();
                 if (deliveries < leastDeliveries) {
@@ -22,7 +21,7 @@ public class FairOcuppationDelivery implements DeliveryPolicy{
             
             }
         }
-        return selectedCourier;
+         order.setCourier(selectedCourier);
     }
 	}
 

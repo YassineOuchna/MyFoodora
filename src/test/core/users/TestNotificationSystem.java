@@ -25,7 +25,6 @@ class TestNotificationSystem {
 
 	@Test
     void testAddSubscriber() throws SubscriberAlreadyExistsException {
-        Restaurant restaurant = new Restaurant("Restaurant1", "password1");
         Customer subscriber1 = new Customer("Customer1", "password1");
         //Customer subscriber2 = new Customer("Customer2", "password2");
 
@@ -39,7 +38,6 @@ class TestNotificationSystem {
 	
 	@Test
     void testRemoveSubscriber() throws SubscriberNotFoundException, SubscriberAlreadyExistsException {
-        Restaurant restaurant = new Restaurant("Restaurant1", "password1");
         Customer subscriber1 = new Customer("Customer3", "password1");
         Customer subscriber2 = new Customer("Customer4", "password2");
 
@@ -71,8 +69,8 @@ class TestNotificationSystem {
 
 
         // Verifying that customers not subscribed are not notified
-        assertFalse(subscriber1.getReceivedEmails().contains("New Special Offer available from restaurant" + restaurant.getSurname()+" : "+ specialOffer));
-        assertFalse(subscriber2.getReceivedEmails().contains("New Special Offer available from restaurant" + restaurant.getSurname()+" : "+ specialOffer));
+        assertFalse(subscriber1.getReceivedEmails().contains("New Special Offer available from restaurant" + restaurant.getName()+" : "+ specialOffer));
+        assertFalse(subscriber2.getReceivedEmails().contains("New Special Offer available from restaurant" + restaurant.getName()+" : "+ specialOffer));
         
         subscriber1.setNotificationsOn(true);
         subscriber2.setNotificationsOn(true);
@@ -80,8 +78,8 @@ class TestNotificationSystem {
         // Verifying that subscribers are notified
         Meal specialOffer2 = new Meal("Special Offer", new ArrayList<Dish>());
         restaurant.setSpecialOffer(specialOffer2);
-        assertTrue(subscriber1.getReceivedEmails().contains("New Special Offer available from restaurant" + restaurant.getSurname()+" : "+ specialOffer2));
-        assertTrue(subscriber2.getReceivedEmails().contains("New Special Offer available from restaurant" + restaurant.getSurname()+" : "+ specialOffer2));
+        assertTrue(subscriber1.getReceivedEmails().contains("New Special Offer available from restaurant" + restaurant.getName()+" : "+ specialOffer2));
+        assertTrue(subscriber2.getReceivedEmails().contains("New Special Offer available from restaurant" + restaurant.getName()+" : "+ specialOffer2));
     }
 
 }

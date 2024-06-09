@@ -9,11 +9,16 @@ import core.orders.Order;
 import core.policies.*;
 import core.MyFoodora;
 import core.comparators.*;
+import core.food.MenuItem;
 
 public class Manager extends User{
 	
 	
+	// Unique app instance
 	private MyFoodora app = MyFoodora.getInstance();
+	
+	// Shipped order sorting policy
+	private OrderSortingPolicy orderSortingPolicy;
 
 	public Manager(String newUsername, String password) {
 		super(newUsername, password);
@@ -23,6 +28,7 @@ public class Manager extends User{
 		super.setName(name);
 		super.setSurname(surname);
 	}
+	
 	
 	
 	public void addUser(User u) {
@@ -48,6 +54,15 @@ public class Manager extends User{
 		return app.computeTotalIncome(start, end);
 	}
 	
+	/**
+	 * Sorts all the ordered menu items according
+	 * to the current orderSortingPolicy
+	 * @return a list of menu items sorted according 
+	 * to the order sorting policy 
+	 */
+	public ArrayList<MenuItem> shippedItemSort(){
+		return orderSortingPolicy.sort();
+	}
 	
 	/**
 	 * Computes the average income by customer
@@ -131,9 +146,71 @@ public class Manager extends User{
      * @return an ordered ArrayList of restaurants in descending order
      */
     public ArrayList<Restaurant> showRestaurantTop(){
-    	ArrayList<Restaurant> allRestaurants = Restaurant.getAllRestaurants();
+    	ArrayList<Restaurant> allRestaurants = app.getRestaurants();
         allRestaurants.sort(new RestaurantComparator());
         Collections.reverse(allRestaurants);  // Sort in descending order
         return allRestaurants;
     }
+    
+ 
+	/**
+	 * determining the restaurant that sold the most
+	 * @return the most selling restaurant
+	 */
+	public Restaurant mostSellingRestaurant() {
+		return app.mostSellingRestaurant();
+	}
+	
+	/**
+	 * determining the restaurant that sold the least
+	 * @return the least selling restaurant
+	 */
+	public Restaurant leastSellingRestaurant() {
+		return app.leastSellingRestaurant();
+	}
+	
+	/**
+	 * determining the courier that delivered the most orders
+	 * @return the most active courier
+	 */
+	public Courier mostActiveCourier() {
+		return app.mostActiveCourier();
+	}
+	
+	/**
+	 * determining the courier that delivered the fewest orders
+	 * @return the least active courier
+	 */
+	public Courier leastActiveCourier() {
+		return app.leastActiveCourier();
+	}
+
+	
+	/**
+	 * change the markup percentage of the system
+	 * @param percentage the new markup percentage of the system
+	 */
+	public void setMarkupPercentage(double percentage) {
+		app.setMarkupPercentage(percentage);
+	}
+	
+	/**
+	 * change the delivery cost of the system
+	 * @param delivery the new delivery cost of the system
+	 */
+	public void setDeliveryCost(double delivery) {
+		app.setDeliveryCost(delivery);
+	}
+	
+	
+	public OrderSortingPolicy getOrderSortingPolicy() {
+		return orderSortingPolicy;
+	}
+	public void setOrderSortingPolicy(OrderSortingPolicy orderSortingPolicy) {
+		this.orderSortingPolicy = orderSortingPolicy;
+	}
+	
+	@Override
+	public String getUserType() {return "manager";}
+    
 }

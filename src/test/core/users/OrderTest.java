@@ -1,5 +1,6 @@
 package test.core.users;
 
+import core.MyFoodora;
 import core.enums.DishCategory;
 import core.enums.FoodType;
 import core.food.Dish;
@@ -9,14 +10,11 @@ import core.exceptions.ItemNotInOrderException;
 import core.orders.Order;
 import core.users.Restaurant;
 import core.users.Customer;
-import core.users.Courrier;
+import core.users.Courier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Date;
-import java.util.Map;
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,6 +23,7 @@ class OrderTest {
     private Order order;
     private Order newOrder;
     private Customer customer;
+    MyFoodora app = MyFoodora.getInstance();
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -77,9 +76,9 @@ class OrderTest {
         newOrder = new Order(restaurant, "Order1", customer);
 
         // Setup available couriers
-        List<Courrier> couriers = new ArrayList<>();
-        couriers.add(new Courrier("Courier1", "password"));
-        couriers.add(new Courrier("Courier2", "password"));
+        app.addUser(new Courier("Courier1", "password"));
+        app.addUser(new Courier("Courier2", "password"));
+
         //Order.setAvailableCouriers(couriers);
     }
 
@@ -191,18 +190,7 @@ class OrderTest {
             order.addItem2Order(pasta);
         });
 
-        // Ensure customer paid the correct amount
-        //double totalPrice = pasta.getPrice();
-        //assertEquals(totalPrice, customer.getTotalPaid());
-
         // Ensure the order is recorded in deliveredOrders
         assertTrue(Order.getAllDeliveredOrders().contains(order));
-    }
-
-    @Test
-    public void testFindDeliverer() {
-        //Courrier courier = order.findDeliverer();
-        //assertNotNull(courier);
-        //assertEquals("Courier1", courier.getUsername());
     }
 }

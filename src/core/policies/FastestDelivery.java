@@ -1,18 +1,18 @@
 package core.policies;
 
-import java.util.ArrayList;
 
+import core.MyFoodora;
 import core.orders.Order;
-import core.users.Courrier;
+import core.users.Courier;
 
 public class FastestDelivery implements DeliveryPolicy{
 
 	@Override
-	public Courrier assignCourrier(ArrayList<Courrier> courriers, Order order) {
-		Courrier selectedCourier = null;
+	public void assignCourrier(Order order) {
+		Courier selectedCourier = null;
         double shortestDistance = Double.MAX_VALUE;
 
-        for (Courrier courier : courriers) {
+        for (Courier courier : MyFoodora.getInstance().getCourriers()) {
         	if (courier.isOnDuty()) {
         		double distance=calculateDistance(courier.getPosition(), order.getRestaurant().getLocation(), order.getCustomer().getAddress());
             if (distance < shortestDistance) {
@@ -22,7 +22,7 @@ public class FastestDelivery implements DeliveryPolicy{
             }
         }
 
-        return selectedCourier;
+        order.setCourier(selectedCourier);
 	}
 	private double calculateDistance(double[] courierLocation, double[] restaurantLocation, double[] customerLocation) {
         // Calculate the distance between the courier, the restaurant, and the customer

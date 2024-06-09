@@ -3,7 +3,7 @@ import java.util.Scanner;
 import java.util.NoSuchElementException;
 import core.users.User;
 import core.users.Customer;
-import core.users.Courrier;
+import core.users.Courier;
 import core.users.Manager;
 import core.users.Restaurant;
 
@@ -117,7 +117,7 @@ public class MyFoodoraChat {
             String[] phonenmail = sc.nextLine().split(",");
             String phone = phonenmail[0];
             String mail = phonenmail[1];
-            Courrier courier = new Courrier(userName, password);
+            Courier courier = new Courier(userName, password);
             courier.setPosition(location);
             courier.setEmail(mail);
             courier.setPhoneNumber(phone);
