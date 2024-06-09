@@ -1,9 +1,11 @@
 package core.food;
 
+
 public abstract class MenuItem {
 	private String name;
 	protected double price;
 
+	
 	public String getName() {
 		return this.name;
 	}

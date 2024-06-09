@@ -3,16 +3,16 @@ package core.policies;
 import java.util.ArrayList;
 
 import core.orders.Order;
-import core.users.Courierr;
+import core.users.Courier;
 
 public class FastestDelivery implements DeliveryPolicy{
 
 	@Override
-	public Courierr assignCourrier(ArrayList<Courierr> courriers, Order order) {
-		Courierr selectedCourier = null;
+	public Courier assignCourrier(ArrayList<Courier> courriers, Order order) {
+		Courier selectedCourier = null;
         double shortestDistance = Double.MAX_VALUE;
 
-        for (Courierr courier : courriers) {
+        for (Courier courier : courriers) {
         	if (courier.isOnDuty()) {
         		double distance=calculateDistance(courier.getPosition(), order.getRestaurant().getLocation(), order.getCustomer().getAddress());
             if (distance < shortestDistance) {

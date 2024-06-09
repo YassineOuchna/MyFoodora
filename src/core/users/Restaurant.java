@@ -24,7 +24,7 @@ public class Restaurant extends User {
 		this.location = new double[] {0,0};
 		
 		// Initialize empty menu
-		this.menu = new Menu();
+		this.menu = new Menu(this);
 		
 		// Default discount values
 		this.genericDiscount = 0.05;
@@ -37,7 +37,7 @@ public class Restaurant extends User {
 		this.location = location;
 		
 		// Initialize empty menu
-		this.menu = new Menu();
+		this.menu = new Menu(this);
 		
 		// Default discount values
 		this.genericDiscount = 0.05;
@@ -100,8 +100,15 @@ public class Restaurant extends User {
 		return menu;
 	}
 	
+	/**
+	 * Sets a meal as a special offer with the 
+	 * special discounted price
+	 * @param specialOffer : meal to set as special offer
+	 */
 	public void setSpecialOffer(Meal specialOffer) {
 		MyFoodora app = MyFoodora.getInstance();
+		// removing the default discount & applying the special offer discount
+		specialOffer.setPrice((1-specialDiscount)*specialOffer.getPrice()/(1-genericDiscount));
 		menu.setSpecialOffer(specialOffer);
 		app.notifySubscribers(this.getName(), specialOffer);
 	}

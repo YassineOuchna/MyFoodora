@@ -7,12 +7,11 @@ import java.util.HashMap;
 import core.exceptions.SubscriberAlreadyExistsException;
 import core.exceptions.SubscriberNotFoundException;
 import core.food.Meal;
-import core.orders.Call;
 import core.orders.Order;
 import core.policies.DeliveryPolicy;
 import core.policies.FairOcuppationDelivery;
 import core.policies.TargetProfitPolicy;
-import core.users.Courierr;
+import core.users.Courier;
 import core.users.Customer;
 import core.users.Restaurant;
 import core.users.SubscriberObservable;
@@ -34,13 +33,14 @@ public class MyFoodora implements SubscriberObservable{
 	private  DeliveryPolicy deliveryPolicy;
 	private  TargetProfitPolicy profitPolicy;
 
+	// Notifying customers of new special Offers
+	private ArrayList<SubscriberObserver> subscribedCustomers;
+
 	// Fees and mark-up percentage
 	private double markupPercentage;
 	private double deliveryCost;
 	private double serviceFee;
 	
-	// Notifying customers of new special Offers
-	private ArrayList<SubscriberObserver> subscribedCustomers;
 	
 	// Unique instance of the app
 	private  static MyFoodora myFoodoraInstance;
@@ -206,29 +206,14 @@ public class MyFoodora implements SubscriberObservable{
 		return restaurants;
 	}
 
-	public ArrayList<Courierr> getCourriers(){
-		ArrayList<Courierr> courriers = new ArrayList<Courierr>();
-		for (Courierr c : courriers) {
+	public ArrayList<Courier> getCourriers(){
+		ArrayList<Courier> courriers = new ArrayList<Courier>();
+		for (Courier c : courriers) {
 			courriers.add(c);
 		}
 		return courriers;
 	}
 	
-	/**
-	 * Finds couriers that are on duty 
-	 * and ready to take an order.
-	 * @return a list of available couriers
-	 */
-	public ArrayList<Courierr> getAvailableCourriers() {
-		ArrayList<Courierr> availableCourrier = new ArrayList<Courierr>();
-		for (Courierr c : this.getCourriers()) {
-			if (c.isOnDuty()) {
-				availableCourrier.add(c);
-			}
-		}
-		return availableCourrier;
-	}
-
 	
 	/**
 	 * Finds the courier for the specified order
@@ -236,13 +221,11 @@ public class MyFoodora implements SubscriberObservable{
 	 * @param order : newly placed order
 	 * @return courier if found, null otherwise 
 	 */
-	public Courierr findDeliverer(Order order){
-		ArrayList<Courierr> availableCourriers = this.getAvailableCourriers();
-        Courierr selectedCourier = deliveryPolicy.assignCourrier(availableCourriers, order);
+	public Courier findDeliverer(Order order){
+        Courier selectedCourier = deliveryPolicy.assignCourrier(this.getCourriers(), order);
 
         if (selectedCourier != null) {
-            Call call = new Call(order);
-            if (selectedCourier.acceptDeliveryCall(call)) {
+            if (selectedCourier.acceptDeliveryCall(order)) {
                 return selectedCourier;
             }
         }
@@ -254,10 +237,10 @@ public class MyFoodora implements SubscriberObservable{
 	 * calculating the courier that delivered the most orders
 	 * @return the most active courier
 	 */
-	public Courierr mostActiveCourier() {
-		Courierr most_courier = this.getCourriers().get(0);
+	public Courier mostActiveCourier() {
+		Courier most_courier = this.getCourriers().get(0);
 		int max_orders = most_courier.getDeliveredOrders().size();
-		for(Courierr c: this.getCourriers()){
+		for(Courier c: this.getCourriers()){
 			if(c.getDeliveredOrders().size() > max_orders){
 				most_courier = c;
 				max_orders = c.getDeliveredOrders().size();
@@ -270,10 +253,10 @@ public class MyFoodora implements SubscriberObservable{
 	 * calculating the courier that delivered the fewest orders
 	 * @return the least active courier
 	 */
-	public Courierr leastActiveCourier() {
-		Courierr least_courier = this.getCourriers().get(0);
+	public Courier leastActiveCourier() {
+		Courier least_courier = this.getCourriers().get(0);
 		int min_orders = least_courier.getDeliveredOrders().size();
-		for(Courierr c: this.getCourriers()){
+		for(Courier c: this.getCourriers()){
 			if(c.getDeliveredOrders().size() < min_orders){
 				least_courier = c;
 				min_orders = c.getDeliveredOrders().size();

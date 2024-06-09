@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import core.exceptions.InvalidItemDescription;
 import core.exceptions.ItemNotInMenuException;
+import core.food.Meal;
 import core.food.Menu;
 import core.users.Restaurant;
 
@@ -40,6 +41,34 @@ class RestaurantTest {
 		};
 	}
 
+	@Test
+	void testPricingMeals() throws InvalidItemDescription, ItemNotInMenuException{
+
+		// Adding dishes first 
+		restaurant.addMenuItem("dish", mcflurryDesc);
+		restaurant.addMenuItem("dish", bigMacDesc);
+		restaurant.addMenuItem("dish", ChickenNuggiesDesc);
+		
+		// Description array of meal 
+		String[] mealDesc = new String[] {"Big Mac Meal",
+				mcflurryDesc[0],
+				bigMacDesc[0],
+				ChickenNuggiesDesc[0]
+		};
+		
+		// Adding should go through (no exception)
+		try {
+			restaurant.addMenuItem("meal", mealDesc);
+		} catch (Exception e) {
+		}
+		
+		// Default meal discount is 5%
+		assertEquals((7.99+2+3)*(1-0.05), restaurant.getMenu().getItem("Big Mac Meal").getPrice());
+
+		// Special offer meal discount is 10%
+		restaurant.setSpecialOffer((Meal) restaurant.getMenu().getItem("Big Mac Meal"));
+		assertEquals((7.99+2+3)*(1-0.1), restaurant.getMenu().getItem("Big Mac Meal").getPrice());
+	}
 	@Test
 	void testAddDish() throws InvalidItemDescription{
 		restaurant.addMenuItem("dish", mcflurryDesc);

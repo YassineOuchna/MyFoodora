@@ -10,7 +10,7 @@ import core.exceptions.ItemNotInOrderException;
 import core.orders.Order;
 import core.users.Restaurant;
 import core.users.Customer;
-import core.users.Courierr;
+import core.users.Courier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,6 +27,7 @@ class OrderTest {
 
     @BeforeEach
     public void setUp() throws Exception {
+    	MyFoodora app = MyFoodora.getInstance();
         restaurant = new Restaurant("restaurantUser", "password");
         String[] pastaDish = new String[] {"Pasta",
                 "Maindish",
@@ -76,10 +77,9 @@ class OrderTest {
         newOrder = new Order(restaurant, "Order1", customer);
 
         // Setup available couriers
-        app.addUser(new Courierr("Courier1", "password"));
-        app.addUser(new Courierr("Courier2", "password"));
+        app.addUser(new Courier("Courier1", "password"));
+        app.addUser(new Courier("Courier2", "password"));
 
-        //Order.setAvailableCouriers(couriers);
     }
 
     @Test
@@ -175,7 +175,7 @@ class OrderTest {
         order.addItem2Order(pasta);
         order.endOrder();
 
-        ArrayList<Order> deliveredOrders = Order.getAllDeliveredOrders();
+        ArrayList<Order> deliveredOrders = app.getCompletedOrders();
         assertEquals(3, deliveredOrders.size());
     }
 
@@ -191,6 +191,6 @@ class OrderTest {
         });
 
         // Ensure the order is recorded in deliveredOrders
-        assertTrue(Order.getAllDeliveredOrders().contains(order));
+        assertTrue(app.getCompletedOrders().contains(order));
     }
 }

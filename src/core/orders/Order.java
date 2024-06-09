@@ -37,12 +37,6 @@ public class Order {
      */
     private Date date;
     
-    /*
-     * We need to store all delivered Orders
-     */
-    private static ArrayList<Order> deliveredOrders = new ArrayList<Order>();
-
-    
     
 
 	public Order(Restaurant restaurant,String name) {
@@ -127,9 +121,6 @@ public class Order {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public static ArrayList<Order> getAllDeliveredOrders() {
-        return deliveredOrders;
-    }
 	public Customer getCustomer() {
 		return customer;
 	}
@@ -147,7 +138,6 @@ public class Order {
 		}
 		MyFoodora app = MyFoodora.getInstance();
 		app.findDeliverer(this);
-		deliveredOrders.add(this);
 		restaurant.addDeliveredOrder();
 	}
 	public Date getDate() {

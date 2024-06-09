@@ -4,24 +4,27 @@ import java.util.Date;
 import java.util.Calendar;
 
 import core.MyFoodora;
+import core.exceptions.ProfitUnreachableException;
 
 public class TargetProfitDeliveryCost implements TargetProfitPolicy{
 
 
 	@Override
-	public double meetTargetProfit(double targetProfit) {
-        // Target Profit = Total Income - (Service Fee + Markup * Delivery Cost + Delivery Cost)
-        // Finding Delivery Cost
-		MyFoodora myFoodora = MyFoodora.getInstance();
+	public double meetTargetProfit(double targetProfit) throws ProfitUnreachableException {
+		MyFoodora app = MyFoodora.getInstance();
+		// Finding last month's income
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MONTH, -1);  
         Date lastMonth = cal.getTime();
-        // Checking if orders are not null
-        double lastMonthIncome = myFoodora.computeTotalIncome(lastMonth, new Date());
-        double deliveryCost = (lastMonthIncome - targetProfit - myFoodora.getServiceFee()) / (1 + myFoodora.getMarkupPercentage());
+        double lastMonthIncome = app.computeTotalIncome(lastMonth, new Date());
         
-        myFoodora.setDeliveryCost(deliveryCost);
-        return deliveryCost;
+        if (lastMonthIncome == 0) {
+        	throw new ProfitUnreachableException("Profit Target cannot be reached");
+        } else {
+        	double deliveryCost = (lastMonthIncome*app.getMarkupPercentage()- targetProfit)/app.getCompletedOrders().size()+ app.getServiceFee(); 
+        	app.setDeliveryCost(deliveryCost);
+        	return deliveryCost;
+        }
 	}
 
 	@Override

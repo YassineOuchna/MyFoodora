@@ -9,6 +9,7 @@ import core.orders.Order;
 import core.policies.*;
 import core.MyFoodora;
 import core.comparators.*;
+import core.exceptions.ProfitUnreachableException;
 import core.food.MenuItem;
 
 public class Manager extends User{
@@ -93,8 +94,9 @@ public class Manager extends User{
 	 * Computes the varying profit related parameter according to 
 	 * the app's target profit policy and changes it to the new value.
 	 * @param targetProfit : target profit policy of the MyFooora app.
+	 * @throws ProfitUnreachable 
 	 */
-	public void meetTargetProfit(double targetProfit) {
+	public void meetTargetProfit(double targetProfit) throws ProfitUnreachableException{
 		TargetProfitPolicy profitPolicy = app.getProfitPolicy();
         if (profitPolicy == null) {
             throw new IllegalStateException("No target profit policy set.");
@@ -116,14 +118,14 @@ public class Manager extends User{
 	 * Obtaining all delivered orders
 	 */
     public ArrayList<Order> getAllDeliveredOrders() {
-        return Order.getAllDeliveredOrders();
+        return app.getCompletedOrders();
     }
     /*
      * Obtaining delivered Orders between Date date1 and Date date2
      */
     public ArrayList<Order> getDeliveredOrders(Date date1, Date date2) {
     	ArrayList<Order> deliveredOrders = new ArrayList<Order>();
-    	for (Order o : Order.getAllDeliveredOrders()) {
+    	for (Order o : app.getCompletedOrders()) {
     		if (o.getDate().after(date1) && o.getDate().before(date2)) {
     			deliveredOrders.add(o);
     		}
@@ -173,7 +175,7 @@ public class Manager extends User{
 	 * determining the courier that delivered the most orders
 	 * @return the most active courier
 	 */
-	public Courierr mostActiveCourier() {
+	public Courier mostActiveCourier() {
 		return app.mostActiveCourier();
 	}
 	
@@ -181,7 +183,7 @@ public class Manager extends User{
 	 * determining the courier that delivered the fewest orders
 	 * @return the least active courier
 	 */
-	public Courierr leastActiveCourier() {
+	public Courier leastActiveCourier() {
 		return app.leastActiveCourier();
 	}
 

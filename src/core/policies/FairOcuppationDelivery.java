@@ -3,16 +3,16 @@ package core.policies;
 import java.util.ArrayList;
 
 import core.orders.Order;
-import core.users.Courierr;
+import core.users.Courier;
 
 public class FairOcuppationDelivery implements DeliveryPolicy{
 
 	@Override
-	public Courierr assignCourrier(ArrayList<Courierr> courriers, Order order) {
-		Courierr selectedCourier = null;
+	public Courier assignCourrier(ArrayList<Courier> courriers, Order order) {
+		Courier selectedCourier = null;
         int leastDeliveries = Integer.MAX_VALUE;
 
-        for (Courierr courier : courriers) {
+        for (Courier courier : courriers) {
         	if (courier.isOnDuty()) {
         		int deliveries = courier.getCompletedDeliveries();
                 if (deliveries < leastDeliveries) {

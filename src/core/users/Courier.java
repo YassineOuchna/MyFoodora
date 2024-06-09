@@ -4,17 +4,17 @@ import java.util.ArrayList;
 
 import core.orders.*;
 
-public class Courierr extends User{
+public class Courier extends User{
 	public int completedDeliveries;
 	private double[] position;
 	private String phoneNumber;
 	private ArrayList<Order> deliveredOrders;
 	private boolean onDuty;
 	
-	public Courierr(String newUsername, String password) {
+	public Courier(String newUsername, String password) {
 		super(newUsername, password);
 	}
-	public Courierr(String newUsername,String password, double[] position,boolean onDuty,int completedDeliveries) {
+	public Courier(String newUsername,String password, double[] position,boolean onDuty,int completedDeliveries) {
 		super(newUsername, password);
 		this.position=position;
 		this.onDuty=onDuty;
@@ -43,7 +43,7 @@ public class Courierr extends User{
 		return deliveredOrders;
 	}
 
-	public boolean acceptDeliveryCall(Call call) {return true;}
+	public boolean acceptDeliveryCall(Order order) {return true;}
 	
 	public int getCompletedDeliveries() {
 		return completedDeliveries;
