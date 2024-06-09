@@ -5,6 +5,7 @@ import core.enums.DishCategory;
 import core.enums.FoodType;
 import core.food.Dish;
 import core.food.MenuItem;
+import core.exceptions.CourierNotFoundException;
 import core.exceptions.ItemNotInMenuException;
 import core.exceptions.ItemNotInOrderException;
 import core.orders.Order;
@@ -77,8 +78,12 @@ class OrderTest {
         newOrder = new Order(restaurant, "Order1", customer);
 
         // Setup available couriers
-        app.addUser(new Courier("Courier1", "password"));
-        app.addUser(new Courier("Courier2", "password"));
+        Courier c1 = new Courier("Courier1", "password");
+        Courier c2 = new Courier("Courier2", "password");
+        c1.setOnDuty(true);
+        c2.setOnDuty(true);
+        app.addUser(c1);
+        app.addUser(c2);
 
     }
 
@@ -156,7 +161,7 @@ class OrderTest {
     }
 
     @Test
-    public void testOrderFrequency() throws ItemNotInMenuException {
+    public void testOrderFrequency() throws ItemNotInMenuException, CourierNotFoundException {
         MenuItem newDish = restaurant.getMenu().getItem("dish");
         MenuItem meal = restaurant.getMenu().getItem("Dish and Pasta Meal");
 
@@ -170,7 +175,7 @@ class OrderTest {
     }
 
     @Test
-    public void testDeliveredOrders() throws ItemNotInMenuException {
+    public void testDeliveredOrders() throws ItemNotInMenuException, CourierNotFoundException {
         MenuItem pasta = restaurant.getMenu().getItem("Pasta");
         order.addItem2Order(pasta);
         order.endOrder();
@@ -180,7 +185,7 @@ class OrderTest {
     }
 
     @Test
-    public void testEndOrder() throws ItemNotInMenuException, ItemNotInOrderException {
+    public void testEndOrder() throws ItemNotInMenuException, ItemNotInOrderException, CourierNotFoundException {
         MenuItem pasta = restaurant.getMenu().getItem("Pasta");
         order.addItem2Order(pasta);
         order.endOrder();

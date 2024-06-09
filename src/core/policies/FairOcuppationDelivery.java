@@ -1,13 +1,14 @@
 package core.policies;
 
 import core.MyFoodora;
+import core.exceptions.CourierNotFoundException;
 import core.orders.Order;
 import core.users.Courier;
 
 public class FairOcuppationDelivery implements DeliveryPolicy{
 
 	@Override
-	public void assignCourrier(Order order) {
+	public void assignCourrier(Order order) throws CourierNotFoundException {
 		Courier selectedCourier = null;
         int leastDeliveries = Integer.MAX_VALUE;
 
@@ -21,7 +22,14 @@ public class FairOcuppationDelivery implements DeliveryPolicy{
             
             }
         }
-         order.setCourier(selectedCourier);
+        if (selectedCourier == null) {
+        	throw new CourierNotFoundException("Available courier not found");
+        } else {
+        	order.setCourier(selectedCourier);
+        	MyFoodora app = MyFoodora.getInstance();
+        	app.addCompletedOrder(order);
+        }
+         
     }
 	}
 

@@ -1,16 +1,21 @@
 package core.users;
 
 
+import java.util.ArrayList;
+
 import core.MyFoodora;
 import core.exceptions.InvalidItemDescription;
 import core.exceptions.ItemNotInMenuException;
 import core.food.*;
+import core.policies.ItemSort;
+import core.policies.OrderSortingPolicy;
 
 public class Restaurant extends User {
 	private double[] location;
 	private Menu menu;
 	private double genericDiscount;
 	private double specialDiscount;
+	private OrderSortingPolicy orderSortingPolicy;
 	
 	/*
 	 * Storing the number of delivered orders from the restaurant
@@ -30,6 +35,10 @@ public class Restaurant extends User {
 		this.genericDiscount = 0.05;
 		this.specialDiscount= 0.1;
 		this.numDeliveredOrders=0;
+
+		// By default the orderSortingPolicy 
+		// is the item sort
+		this.orderSortingPolicy = new ItemSort();
 	}
 
 	public Restaurant(String newUsername, String password, double[] location) {
@@ -43,9 +52,21 @@ public class Restaurant extends User {
 		this.genericDiscount = 0.05;
 		this.specialDiscount= 0.1;
 		this.numDeliveredOrders=0;
+		// By default the orderSortingPolicy 
+		// is the item sort
+		this.orderSortingPolicy = new ItemSort();
 	}
 	
 	
+	/**
+	 * Sorts all the ordered menu items according
+	 * to the current orderSortingPolicy
+	 * @return a list of menu items sorted according 
+	 * to the order sorting policy 
+	 */
+	public ArrayList<MenuItem> shippedItemSort(){
+		return orderSortingPolicy.sort(this.getMenu().getItems().values());
+	}
 
 	/**
 	 * This method adds an item
@@ -125,5 +146,13 @@ public class Restaurant extends User {
     }
 	@Override
 	public String getUserType() {return "restaurant";}
+
+	public OrderSortingPolicy getOrderSortingPolicy() {
+		return orderSortingPolicy;
+	}
+
+	public void setOrderSortingPolicy(OrderSortingPolicy orderSortingPolicy) {
+		this.orderSortingPolicy = orderSortingPolicy;
+	}
 
 }

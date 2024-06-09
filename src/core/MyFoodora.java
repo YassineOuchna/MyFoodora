@@ -48,8 +48,6 @@ public class MyFoodora implements SubscriberObservable {
 	private double deliveryCost;
 	private double serviceFee;
 
-	// Notifying customers of new special Offers
-	private ArrayList<SubscriberObserver> subscribedCustomers;
 
 	// Unique instance of the app
 	private static MyFoodora myFoodoraInstance;
@@ -85,12 +83,18 @@ public class MyFoodora implements SubscriberObservable {
 		hashedPasswords.put(u.getId(), u.getHashedPassword());
 	}
 
-	public void removeUser(User u) {
+	public void removeUser(User u) throws UserNotFoundException {
+		User user2remove = null;
 		for (User usr : users) {
 			if (usr.getId() == u.getId()) {
-				users.remove(u);
-				hashedPasswords.remove(u.getId());
+				user2remove = usr;
 			}
+		}
+		if (!(user2remove == null)) {
+			users.remove(u);
+			hashedPasswords.remove(u.getId());
+		}else {
+			throw new UserNotFoundException("Specified user already doesn't exist");
 		}
 	}
 
@@ -230,24 +234,33 @@ public class MyFoodora implements SubscriberObservable {
 
 	public ArrayList<Customer> getCustomers() {
 		ArrayList<Customer> customers = new ArrayList<Customer>();
-		for (Customer c : customers) {
-			customers.add(c);
+		for (User u : users) {
+			if (u.getClass() == Customer.class) {
+				Customer c = (Customer) u;
+				customers.add(c);
+			}
 		}
 		return customers;
 	}
 
 	public ArrayList<Restaurant> getRestaurants() {
 		ArrayList<Restaurant> restaurants = new ArrayList<Restaurant>();
-		for (Restaurant c : restaurants) {
-			restaurants.add(c);
+		for (User u : users) {
+			if (u.getClass() == Restaurant.class) {
+				Restaurant c = (Restaurant) u;
+				restaurants.add(c);
+			}
 		}
 		return restaurants;
 	}
 
 	public ArrayList<Courier> getCourriers() {
 		ArrayList<Courier> courriers = new ArrayList<Courier>();
-		for (Courier c : courriers) {
-			courriers.add(c);
+		for (User u : users) {
+			if (u.getClass() == Courier.class) {
+				Courier c = (Courier) u;
+				courriers.add(c);
+			}
 		}
 		return courriers;
 	}

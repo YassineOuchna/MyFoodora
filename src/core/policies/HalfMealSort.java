@@ -1,6 +1,7 @@
 package core.policies;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import core.MyFoodora;
 import core.comparators.*;
@@ -28,6 +29,23 @@ public class HalfMealSort implements OrderSortingPolicy{
 				}
 			}
 		}
+		halfMeals.sort(comp);
+		return halfMeals;
+	}
+
+	@Override
+	public ArrayList<MenuItem> sort(Collection<MenuItem> items) {
+		MenuItemComparator comp= new MenuItemComparator();
+		ArrayList<MenuItem> halfMeals= new ArrayList<MenuItem>();
+		
+			for (MenuItem item : items) {
+				if (item instanceof Meal) {
+					Meal meal= (Meal) item;
+					if (meal.getMealSize()==MealSize.HALFMEAL) {
+						halfMeals.add((MenuItem) meal);
+					}
+				}
+			}
 		halfMeals.sort(comp);
 		return halfMeals;
 	}

@@ -2,6 +2,7 @@ package core.orders;
 
 import core.food.*;
 import core.MyFoodora;
+import core.exceptions.CourierNotFoundException;
 import core.exceptions.ItemNotInMenuException;
 import core.exceptions.ItemNotInOrderException;
 import core.users.Restaurant;
@@ -146,9 +147,11 @@ public class Order {
 	
 	
 	/**
-	 * Ends the order, making it unmodifiable
+	 * Ends the order, making it unmodifiable 
+	 * and submits it to the app to be delivered
+	 * @throws CourierNotFoundException 
 	 */
-	public void endOrder() {
+	public void endOrder() throws CourierNotFoundException {
 		ordering=false;
 		
 		double discount=customer.getFidelityCard().getFidelityDiscount();
@@ -158,6 +161,8 @@ public class Order {
 		for (MenuItem item : orderItems.keySet()) {
 			item.orderFrequency=item.orderFrequency+orderItems.get(item);
 		}
+		// Submitting the order to app 
+		MyFoodora.getInstance().getDeliveryPolicy().assignCourrier(this);
 	}
 	public Date getDate() {
 		return date;
@@ -170,7 +175,6 @@ public class Order {
 	public void setCourier(Courier courier) {
 		this.courier = courier;
 		//we put the order on the board of the courier
-		this.courier.getBoard().add(this);
 	}
 
 	/**

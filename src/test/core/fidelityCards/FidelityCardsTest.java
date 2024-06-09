@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import core.MyFoodora;
+import core.exceptions.CourierNotFoundException;
 import core.exceptions.InvalidItemDescription;
 import core.exceptions.ItemNotInMenuException;
 import core.fidelityCards.BasicFidelityCard;
@@ -12,6 +14,7 @@ import core.fidelityCards.LotteryFidelityCard;
 import core.fidelityCards.PointFidelityCard;
 import core.food.MenuItem;
 import core.orders.Order;
+import core.users.Courier;
 import core.users.Customer;
 import core.users.Restaurant;
 
@@ -47,6 +50,9 @@ class FidelityCardsTest {
         		pastaDish[0]
         };
         restaurant.getMenu().addItem("meal", SaladPastaMeal);
+        Courier c = new Courier("courier", "pessward");
+        c.setOnDuty(true);
+        MyFoodora.getInstance().addUser(c);
 
         order = new Order(restaurant, "Sam's order", sam);
 	}
@@ -65,35 +71,36 @@ class FidelityCardsTest {
 		
 	}
 	@Test
-	void pointTierTestPointsIncrement() throws ItemNotInMenuException{
+	void pointTierTestPointsIncrement() throws ItemNotInMenuException, CourierNotFoundException{
 		PointFidelityCard pointCard = new PointFidelityCard();
 		sam.registerFidelityCard(pointCard);
 		// Testing points increment with a meal > 10e in price
 		MenuItem saladMeal = restaurant.getMenu().getItem("Salad and Pasta Meal");
 		order.addItem2Order(saladMeal);
 		order.endOrder();
-		// a salad meal is 20.5e so 2 points are expected
-		assertEquals(2, pointCard.getPoints());
+		// a salad meal is 20.5e - 5% discount = 19.025
+		// so 1 point is expected
+		assertEquals(1, pointCard.getPoints());
 	}
 	
 	@Test
-	void pointTierTestDiscount() throws ItemNotInMenuException{
+	void pointTierTestDiscount() throws ItemNotInMenuException, CourierNotFoundException{
 		PointFidelityCard pointCard = new PointFidelityCard();
 		sam.registerFidelityCard(pointCard);
 
 		// Testing fidelity discount being 10% when reaching 100 points
 		MenuItem saladMeal = restaurant.getMenu().getItem("Salad and Pasta Meal");
 
-		// A salad meal is 20.5 euros = 2 points
-		// sam pays 20.5 x 50 = 1025 euros ~ 102 points
-		for (int i = 0; i < 50; i++) {
+		// A salad meal is 20.5 euros - 5% disc = 19.475 = 1 points
+		// sam pays 19.475 x 54 = 1051.65 euros ~ 105 points
+		for (int i = 0; i < 54; i++) {
 			order.addItem2Order(saladMeal);
 		}
 		order.endOrder();
 
 		// 102 points turns into 10% discount + 2 points
-		assertEquals(pointCard.getPoints(),2);
 		assertEquals(pointCard.getFidelityDiscount(),0.1);
+		assertEquals(pointCard.getPoints(),5);
 	}
 	
 	@Test

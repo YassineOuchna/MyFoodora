@@ -1,6 +1,7 @@
 package core.policies;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import core.MyFoodora;
 import core.comparators.*;
@@ -23,5 +24,13 @@ public class ItemSort implements OrderSortingPolicy{
 		}
 		items.sort(comp);
 	return items;
+	}
+
+	@Override
+	public ArrayList<MenuItem> sort(Collection<MenuItem> items) {
+		MenuItemComparator comp= new MenuItemComparator(); 
+		ArrayList<MenuItem> sortedItems = (ArrayList<MenuItem>) items;
+		sortedItems.sort(comp);
+	return sortedItems;
 	}
 }

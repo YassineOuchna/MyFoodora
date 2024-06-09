@@ -10,6 +10,7 @@ import core.policies.*;
 import core.MyFoodora;
 import core.comparators.*;
 import core.exceptions.ProfitUnreachableException;
+import core.exceptions.UserNotFoundException;
 import core.food.MenuItem;
 
 public class Manager extends User{
@@ -28,6 +29,10 @@ public class Manager extends User{
 		super(username, password);
 		super.setName(name);
 		super.setSurname(surname);
+		
+		// By default the orderSortingPolicy 
+		// is the item sort
+		this.orderSortingPolicy = new ItemSort();
 	}
 	
 	
@@ -35,7 +40,7 @@ public class Manager extends User{
 	public void addUser(User u) {
 		app.addUser(u);
 	}
-	public void removeUser(User u) {
+	public void removeUser(User u) throws UserNotFoundException {
 		app.removeUser(u);
 	}
 
