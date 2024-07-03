@@ -255,11 +255,10 @@ public class MyFoodoraClient{
 					break;					
 				case("help"):
 					if (!checkArgumentsCount(st,0)) {
-						System.out.println("Not enough arguments!");
 						System.err.println("Invalid number of arguments or syntax error.");
 						
 					} else {
-					System.out.println("\"register <firstName> <lastName> <username> <password> <address>\" : register as customer into the system\n"
+					System.out.println("\"registerManager <name> <username> <password>\" : register as manager into the system\n"
 							+ "\"login <username> <password>\" : log into the system\n"
 							+ "\"runTest <testScenarioFile>\" : execute the list of CLUI commands contained in the testScenario file passed as argument\n"
 							+ "\"close<>\" : close MyFoodora");}
@@ -596,27 +595,10 @@ public class MyFoodoraClient{
 		boolean error = false ;
 		String commande ;
 		try{
-				System.out.println("\"registerRestaurant <name> <username> <password> <address> : register a new restaurant\n"
-						+ "\"registerCustomer <firstName> <lastName> <username> <password> <address> : register a new customer\n"
-						+ "\"registerCourier <firstName> <lastName> <username> <password> <address> : register a new courier\n"
-						+ "\"setDeliveryPolicy <delPolicyName>\" : set the delivery policy to \"fastest\" or \"fairOccupation\"\n"
-						+ "\"meetTargetProfit <profitInfoName> <targetProfit>\" : show how to set the value of the profit info (\"deliveryCost\", \"serviceFee\" or \"markup\") to meet the target profit.\n"
-						+ "\"setProfitInfoValue <profitInfoName> <value>\" : sets the profitInfo (\"deliveryCost\", \"serviceFee\" or \"markup\") to the value\n"
-						+ "\"associateCard <userName> <cardType>\" : associate a new fidelity card (\"basic\", \"point\" or \"lottery\" to the user\n"
-						+ "\"showCourierDeliveries <>\" : displays all the Courier ordered by the number of delivered orders\n"
-						+ "\"showRestaurantTop <>\" : displays all the Restaurants ordered by the number of orders sold\n"
-						+ "\"showCustomers <>\" : displays all the Customers\n"
-						+ "\"showMenuItem <restaurantName>\" : displays the menu of the restaurant\n"
-						+ "\"showTotalProfit <>\" : displays the total profit of MyFoodora.\n"
-						+ "\"showTotalProfit <startDate> <endDate>\" : displays the profit between statDate and endDate (format DD/MM/YYYY)\n"
-						+ "\"activateUser <username>\" : activates the user\n"
-						+ "\"deactivateUser <username>\" : deactivates the user\n"
-						+ "\"logout\" : log out"
-						);
 			commande = st.nextToken() ;
 			switch (commande){
 			case("help"):
-				System.out.println("\"registerRestaurant <name> <username> <password> <address> : register a new restaurant\n"
+				System.out.println("\"registerRestaurant <name> <username> <password> : register a new restaurant\n"
 						+ "\"registerCustomer <firstName> <lastName> <username> <password> <address> : register a new customer\n"
 						+ "\"registerCourier <firstName> <lastName> <username> <password> <address> : register a new courier\n"
 						+ "\"setDeliveryPolicy <delPolicyName>\" : set the delivery policy to \"fastest\" or \"fairOccupation\"\n"
@@ -701,7 +683,7 @@ public class MyFoodoraClient{
 				case("registerRestaurant"):
 					if (!checkArgumentsCount(st,3)) {
 						System.out.println("Not enough arguments!");
-						System.err.println("The command "+ commande +" <name> <username> <password> <address> has only 3 parameters.");
+						System.err.println("The command "+ commande +" <name> <username> <password> has only 3 parameters.");
 						break;
 					} 
 					String restaurantName = st.nextToken();
@@ -820,7 +802,7 @@ public class MyFoodoraClient{
 					
 					
 					currentManager.setDeliveryPolicy(policy);
-				}
+					System.out.println("Delivery Policy has been set to : \n" + policy);				}
 				return "next" ;
 			case("meetTargetProfit"):
 				String profitPolicyName = st.nextToken();
@@ -1366,4 +1348,3 @@ public class MyFoodoraClient{
 		}
 	}
 }
-
